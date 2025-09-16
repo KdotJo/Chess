@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -54,10 +55,28 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        List<ChessMove> moves = new ArrayList<>();
         ChessPiece piece = board.getPiece(myPosition);
         if (piece.getPieceType() == ChessPiece.PieceType.BISHOP) {
-            return List.of(new ChessMove(new ChessPosition(5,4), new ChessPosition(1,8), null));
+            int[][] directions = {
+                {1, 1},
+                {1, -1},
+                {-1, 1},
+                {-1, -1},
+            };
+            int row = myPosition.getRow();
+            int col = myPosition.getColumn();
+            for (int [] dir : directions ) {
+                int row_change = dir[0];
+                int col_change = dir[1];
+                int new_row = row + row_change;
+                int new_col = col + col_change;
+                while ((new_row <= 8 && new_row >= 1) && (new_col <= 8  && new_col >= 1)) {
+
+                }
+
+                }
+            }
+            return moves;
         }
-        return new HashSet<ChessMove>();
     }
-}
