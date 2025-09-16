@@ -2,7 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -72,11 +71,11 @@ public class ChessPiece {
                 int new_row = row + row_change;
                 int new_col = col + col_change;
                 while ((new_row <= 8 && new_row >= 1) && (new_col <= 8  && new_col >= 1)) {
-
-                }
-
+                    ChessPosition nextPosition = new ChessPosition(new_row, new_col);
+                    if (nextPosition == null) {moves.add(new ChessMove(myPosition, nextPosition, null));}
                 }
             }
-            return moves;
         }
+            return moves;
     }
+}
