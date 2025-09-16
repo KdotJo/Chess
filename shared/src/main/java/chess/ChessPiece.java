@@ -65,7 +65,6 @@ public class ChessPiece {
             };
             int row = myPosition.getRow();
             int col = myPosition.getColumn();
-
             for (int [] dir : directions ) {
                 int row_change = dir[0];
                 int col_change = dir[1];
