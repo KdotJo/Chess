@@ -74,7 +74,7 @@ public class ChessPiece {
                 while ((new_row <= 8 && new_row >= 1) && (new_col <= 8  && new_col >= 1)) {
                     ChessPosition nextPosition = new ChessPosition(new_row, new_col);
                     ChessPiece nextPiece = board.getPiece(nextPosition);
-                    if (nextPosition == null) {moves.add(new ChessMove(myPosition, nextPosition, null));}
+                    if (nextPiece == null) {moves.add(new ChessMove(myPosition, nextPosition, null));}
                     else if (this.getTeamColor() == nextPiece.getTeamColor()) {break;}
                     else {
                         moves.add(new ChessMove(myPosition, nextPosition, null));
