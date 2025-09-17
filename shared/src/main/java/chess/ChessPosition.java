@@ -16,12 +16,6 @@ public class ChessPosition {
         this.col = col;
     }
 
-    public boolean equals(Object obj) {
-        if (this == obj) {return true;}
-        if (obj == null || getClass() != obj.getClass()) {return false;}
-        ChessPosition chessPosition = (ChessPosition) obj;
-        return row == chessPosition.row && col == chessPosition.col;
-    }
     /**
      * @return which row this position is in
      * 1 codes for the bottom row
@@ -38,9 +32,17 @@ public class ChessPosition {
         return col;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {return true;}
+        if (obj == null || getClass() != obj.getClass()) {return false;}
+        ChessPosition chessPosition = (ChessPosition) obj;
+        return row == chessPosition.row && col == chessPosition.col;
+    }
 
     @Override
     public String toString() {
         return String.format("[%d,%d]", row, col);
     }
 }
+
