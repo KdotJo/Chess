@@ -91,6 +91,24 @@ public class ChessPiece {
                     {-1, 0},
                     {0, -1}
             };
+            int row = myPosition.getRow();
+            int col = myPosition.getColumn();
+            for (int [] dir : directions ) {
+                int row_change = dir[0];
+                int col_change = dir[1];
+                int new_row = row + row_change;
+                int new_col = col + col_change;
+                while ((new_row <= 8 && new_row >= 1) && (new_col <= 8  && new_col >= 1)) {
+                    ChessPosition nextPosition = new ChessPosition(new_row, new_col);
+                    ChessPiece nextPiece = board.getPiece(nextPosition);
+                    if (nextPiece == null) {moves.add(new ChessMove(myPosition, nextPosition, null));}
+                    else if (this.getTeamColor() == nextPiece.getTeamColor()) {break;}
+                    else {
+                        moves.add(new ChessMove(myPosition, nextPosition, null));
+                        break;
+                    }
+                }
+            }
         }
             return moves;
     }
