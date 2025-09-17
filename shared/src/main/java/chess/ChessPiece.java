@@ -61,7 +61,7 @@ public class ChessPiece {
                 {1, 1},
                 {1, -1},
                 {-1, 1},
-                {-1, -1},
+                {-1, -1}
             };
             int row = myPosition.getRow();
             int col = myPosition.getColumn();
@@ -83,6 +83,14 @@ public class ChessPiece {
                     new_col += col_change;
                 }
             }
+        }
+        if (piece.getPieceType() == PieceType.ROOK) {
+            int [][] directions = {
+                    {1, 0},
+                    {0, 1},
+                    {-1, 0},
+                    {0, -1}
+            };
         }
             return moves;
     }
