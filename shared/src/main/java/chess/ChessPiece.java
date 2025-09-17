@@ -107,6 +107,8 @@ public class ChessPiece {
                         moves.add(new ChessMove(myPosition, nextPosition, null));
                         break;
                     }
+                    new_row += row_change;
+                    new_col += col_change;
                 }
             }
         }
