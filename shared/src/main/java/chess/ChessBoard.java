@@ -47,5 +47,19 @@ private ChessPiece[][] board =  new ChessPiece[8][8];
             board[1][column] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
             board[6][column] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
         }
+        ChessPiece.PieceType[] back_ranks = {
+                ChessPiece.PieceType.ROOK,
+                ChessPiece.PieceType.KNIGHT,
+                ChessPiece.PieceType.BISHOP,
+                ChessPiece.PieceType.QUEEN,
+                ChessPiece.PieceType.KING,
+                ChessPiece.PieceType.BISHOP,
+                ChessPiece.PieceType.KNIGHT,
+                ChessPiece.PieceType.ROOK
+        };
+        for (int column = 0; column < 8; column++) {
+            board[0][column] =  new ChessPiece(ChessGame.TeamColor.WHITE, back_ranks[column]);
+            board[7][column] =  new ChessPiece(ChessGame.TeamColor.BLACK, back_ranks[column]);
+        }
     }
 }
