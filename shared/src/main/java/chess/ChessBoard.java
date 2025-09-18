@@ -38,6 +38,14 @@ private ChessPiece[][] board =  new ChessPiece[8][8];
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        for (int row = 0; row < 8; row++) {
+            for (int column = 0; column < 8; column++) {
+                board[row][column] = null;
+            }
+        }
+        for (int column = 0; column < 8; column++) {
+            board[1][column] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+            board[6][column] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+        }
     }
 }
