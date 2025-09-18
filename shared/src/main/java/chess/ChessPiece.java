@@ -206,10 +206,9 @@ public class ChessPiece {
             int row = myPosition.getRow();
             int col = myPosition.getColumn();
             int new_row = row + directions;
-            int new_col = col + directions;
-            ChessPosition nextPosition = new ChessPosition(new_row, new_col);
-            ChessPiece nextPiece = board.getPiece(nextPosition);
-            if ((new_row <= 8 && new_row >= 1) && (new_col <= 8  && new_col >= 1)) {
+            if ((new_row <= 8 && new_row >= 1) && (col <= 8  && col >= 1)) {
+                ChessPosition nextPosition = new ChessPosition(new_row, col);
+                ChessPiece nextPiece = board.getPiece(nextPosition);
                 if (new_row == promotion_row) {
                     moves.add(new ChessMove(myPosition, nextPosition, PieceType.KNIGHT));
                     moves.add(new ChessMove(myPosition, nextPosition, PieceType.QUEEN));
@@ -217,6 +216,17 @@ public class ChessPiece {
                     moves.add(new ChessMove(myPosition, nextPosition, PieceType.BISHOP));
                 }
                 else {moves.add(new ChessMove(myPosition, nextPosition, null));}
+            }
+            if (row == starting_row) {
+                int one_move = row + directions;
+                int double_move = row + 2 * directions;
+                ChessPosition nextPosition = new ChessPosition(one_move, col);
+                ChessPosition nextPosition2 = new ChessPosition(double_move, col);
+                ChessPiece nextPiece = board.getPiece(nextPosition);
+                ChessPiece nextPiece2 = board.getPiece(nextPosition2);
+                if (nextPiece == null && nextPiece2 == null) {
+                    moves.add(new ChessMove(myPosition, nextPosition, null));
+                }
             }
         }
             return moves;
