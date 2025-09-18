@@ -199,6 +199,10 @@ public class ChessPiece {
                 }
             }
         }
+        if (piece.getPieceType() == PieceType.PAWN) {
+            int directions = (piece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : -1;
+
+        }
             return moves;
     }
 }
