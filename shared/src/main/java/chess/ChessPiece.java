@@ -201,7 +201,10 @@ public class ChessPiece {
         }
         if (piece.getPieceType() == PieceType.PAWN) {
             int directions = (piece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : -1;
-
+            int starting_row = (piece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 2 : 7;
+            int promotion_row = (piece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 8 : 1;
+            int row = myPosition.getRow();
+            int col = myPosition.getColumn();
         }
             return moves;
     }
