@@ -209,13 +209,16 @@ public class ChessPiece {
             if ((new_row <= 8 && new_row >= 1) && (col <= 8  && col >= 1)) {
                 ChessPosition nextPosition = new ChessPosition(new_row, col);
                 ChessPiece nextPiece = board.getPiece(nextPosition);
-                if (new_row == promotion_row) {
-                    moves.add(new ChessMove(myPosition, nextPosition, PieceType.KNIGHT));
-                    moves.add(new ChessMove(myPosition, nextPosition, PieceType.QUEEN));
-                    moves.add(new ChessMove(myPosition, nextPosition, PieceType.ROOK));
-                    moves.add(new ChessMove(myPosition, nextPosition, PieceType.BISHOP));
+                if (nextPiece == null) {
+                    if (new_row == promotion_row) {
+                        moves.add(new ChessMove(myPosition, nextPosition, PieceType.KNIGHT));
+                        moves.add(new ChessMove(myPosition, nextPosition, PieceType.QUEEN));
+                        moves.add(new ChessMove(myPosition, nextPosition, PieceType.ROOK));
+                        moves.add(new ChessMove(myPosition, nextPosition, PieceType.BISHOP));
+                    } else {
+                        moves.add(new ChessMove(myPosition, nextPosition, null));
+                    }
                 }
-                else {moves.add(new ChessMove(myPosition, nextPosition, null));}
             }
             if (row == starting_row) {
                 int one_move = row + directions;
