@@ -228,7 +228,7 @@ public class ChessPiece {
                 ChessPiece nextPiece = board.getPiece(nextPosition);
                 ChessPiece nextPiece2 = board.getPiece(nextPosition2);
                 if (nextPiece == null && nextPiece2 == null) {
-                    moves.add(new ChessMove(myPosition, nextPosition, null));
+                    moves.add(new ChessMove(myPosition, nextPosition2, null));
                 }
             }
             for (int dc : new int[]{1, -1}) {
