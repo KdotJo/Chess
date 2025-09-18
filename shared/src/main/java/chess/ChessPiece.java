@@ -231,6 +231,22 @@ public class ChessPiece {
                     moves.add(new ChessMove(myPosition, nextPosition, null));
                 }
             }
+            for (int dc : new int[]{1, -1}) {
+                int col_change = col + dc;
+                if ((new_row <= 8 && new_row >= 1) && (col <= 8  && col >= 1)) {
+                    ChessPosition nextPosition = new ChessPosition(new_row, col_change);
+                    ChessPiece nextPiece = board.getPiece(nextPosition);
+                    if (getTeamColor() != nextPiece.getTeamColor()) {
+                        if (new_row == promotion_row) {
+                            moves.add(new ChessMove(myPosition, nextPosition, PieceType.QUEEN));
+                            moves.add(new ChessMove(myPosition, nextPosition, PieceType.ROOK));
+                            moves.add(new ChessMove(myPosition, nextPosition, PieceType.BISHOP));
+                            moves.add(new ChessMove(myPosition, nextPosition, PieceType.KNIGHT));
+                        }
+
+                    }
+                }
+            }
         }
             return moves;
     }
