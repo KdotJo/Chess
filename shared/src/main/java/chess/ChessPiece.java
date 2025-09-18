@@ -205,6 +205,19 @@ public class ChessPiece {
             int promotion_row = (piece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 8 : 1;
             int row = myPosition.getRow();
             int col = myPosition.getColumn();
+            int new_row = row + directions;
+            int new_col = col + directions;
+            ChessPosition nextPosition = new ChessPosition(new_row, new_col);
+            ChessPiece nextPiece = board.getPiece(nextPosition);
+            if ((new_row <= 8 && new_row >= 1) && (new_col <= 8  && new_col >= 1)) {
+                if (new_row == promotion_row) {
+                    moves.add(new ChessMove(myPosition, nextPosition, PieceType.KNIGHT));
+                    moves.add(new ChessMove(myPosition, nextPosition, PieceType.QUEEN));
+                    moves.add(new ChessMove(myPosition, nextPosition, PieceType.ROOK));
+                    moves.add(new ChessMove(myPosition, nextPosition, PieceType.BISHOP));
+                }
+                else {moves.add(new ChessMove(myPosition, nextPosition, null));}
+            }
         }
             return moves;
     }
