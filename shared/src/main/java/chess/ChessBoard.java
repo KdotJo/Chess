@@ -62,4 +62,12 @@ private ChessPiece[][] board =  new ChessPiece[8][8];
             board[7][column] =  new ChessPiece(ChessGame.TeamColor.BLACK, back_ranks[column]);
         }
     }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {return true;}
+        if (obj == null || getClass() != obj.getClass()) {return false;}
+
+    }
 }
+
+
