@@ -10,8 +10,7 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    public ChessGame.TeamColor pieceColor;
-    public ChessPiece.PieceType type;
+
     private ChessPiece[][] board = new ChessPiece[8][8];
     public ChessBoard() {
         
@@ -38,6 +37,18 @@ public class ChessBoard {
         return board[position.getRow()-1][position.getColumn()-1];
     }
 
+    public ChessBoard deepCopy() {
+        ChessBoard board = new ChessBoard();
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                ChessPiece piece = this.board[row][col];
+                if  (piece != null) {
+                    board.board[row][col] = piece;
+                }
+            }
+        }
+        return board;
+    }
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
