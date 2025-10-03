@@ -55,7 +55,7 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         List<ChessMove> valid_moves = new ArrayList<>();
         ChessPiece piece = board.getPiece(startPosition);
-
+        ChessBoard current_board = this.board;
         if (piece == null || getTeamTurn() != piece.getTeamColor()) {return valid_moves;}
 
         Collection<ChessMove> temp_moves = piece.pieceMoves(board, startPosition);
@@ -66,12 +66,13 @@ public class ChessGame {
             ChessPiece temp_piece = temp_board.getPiece(temp_start);
             temp_board.addPiece(temp_start, null);
 
-            if (temp_board.getPiece(temp_end) == null || (temp_board.getPiece(temp_end) != null &&
-                    temp_board.getPiece(temp_end).getTeamColor() != temp_piece.getTeamColor())) {
+            if (temp_board.getPiece(temp_end) == null || temp_board.getPiece(temp_end).getTeamColor() != temp_piece.getTeamColor()) {
                 temp_board.addPiece(temp_end, temp_piece);
+                this.board =  temp_board;
                 if (!isInCheck(temp_piece.getTeamColor())) {
                     valid_moves.add(move);
                 }
+                this.board = current_board;
             }
         }
         return valid_moves;
