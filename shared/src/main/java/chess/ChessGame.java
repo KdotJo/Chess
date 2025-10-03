@@ -56,7 +56,7 @@ public class ChessGame {
         List<ChessMove> valid_moves = new ArrayList<>();
         ChessPiece piece = board.getPiece(startPosition);
         ChessBoard current_board = this.board;
-        if (piece == null || getTeamTurn() != piece.getTeamColor()) {return valid_moves;}
+        if (piece == null) {return valid_moves;}
 
         Collection<ChessMove> temp_moves = piece.pieceMoves(board, startPosition);
         for (ChessMove move : temp_moves) {
