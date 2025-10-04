@@ -256,10 +256,10 @@ public class ChessGame {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessGame that = (ChessGame) o;
-        return Objects.equals(board, that.board);
+        return Objects.equals(board, that.board) && color == that.color;
     }
     @Override
     public int hashCode() {
-        return Objects.hash(board);
+        return Objects.hash(board, color);
     }
 }
