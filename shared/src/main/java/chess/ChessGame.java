@@ -215,7 +215,9 @@ public class ChessGame {
                         ChessBoard temp_board = board.deepCopy();
                         ChessPiece temp_piece = temp_board.getPiece(startPosition);
                         temp_board.addPiece(startPosition, null);
-
+                        if (temp_piece.getPieceType() == ChessPiece.PieceType.KING) {
+                            if (isInCheck(temp_piece.getTeamColor())) {return false;}
+                        }
                         if (temp_board.getPiece(endPosition) == null || temp_board.getPiece(endPosition).getTeamColor() != temp_piece.getTeamColor()) {
                             temp_board.addPiece(endPosition, temp_piece);
                             this.board = temp_board;
