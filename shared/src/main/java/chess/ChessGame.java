@@ -258,4 +258,8 @@ public class ChessGame {
         ChessGame that = (ChessGame) o;
         return Objects.equals(board, that.board);
     }
+    @Override
+    public int hashCode() {
+        return Objects.hash(board);
+    }
 }
