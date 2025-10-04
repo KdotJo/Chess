@@ -162,35 +162,33 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        ChessPosition kingPos = null;
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
                 ChessPosition position = new ChessPosition(row, col);
                 ChessPiece piece = board.getPiece(position);
-                if ((piece != null) && (piece.getTeamColor() == teamColor) && (piece.getPieceType() == ChessPiece.PieceType.KING)) {
-                    kingPos = position;
-                    break;
+
+                if ((piece != null) && (piece.getTeamColor() == teamColor)) {
+                    Collection<ChessMove> moves = piece.pieceMoves(board, position);
+                    ChessBoard current_board = this.board;
+
+                    for (ChessMove move : moves) {
+                        ChessPosition startPosition = move.getStartPosition();
+                        ChessPosition endPosition = move.getEndPosition();
+                        ChessBoard temp_board = board.deepCopy();
+                        ChessPiece temp_piece = temp_board.getPiece(startPosition);
+                        temp_board.addPiece(startPosition, null);
+                        if (temp_board.getPiece(endPosition) == null || temp_board.getPiece(endPosition).getTeamColor() != temp_piece.getTeamColor()) {
+                            temp_board.addPiece(endPosition, temp_piece);
+                            this.board = temp_board;
+                            if (!isInCheck(temp_piece.getTeamColor())) {
+                                return false;
+                            }
+                            this.board = current_board;
+                        }
+                    }
                 }
             }
-            if (kingPos != null) {break;}
         }
-        ChessBoard temp = board.deepCopy();
-        ChessPiece king = temp.getPiece(kingPos);
-        Collection<ChessMove> king_moves = king.pieceMoves(board, kingPos);
-        if (isInCheck(king.getTeamColor())) {
-            for (ChessMove move : king_moves) {
-                board.addPiece(move.getEndPosition(), king);
-                king = board.getPiece(move.getEndPosition());
-                if (isInCheck(king.getTeamColor())) {
-                    board.addPiece(move.getStartPosition(), king);
-                    king = board.getPiece(move.getStartPosition());
-                }
-                else {
-                    return false;
-                }
-            }
-        }
-        setTeamTurn(color);
         return true;
     }
 
@@ -202,7 +200,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        throw new RuntimeException();
     }
 
     /**
