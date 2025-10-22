@@ -30,9 +30,6 @@ public class UserDAO {
         return mockDB.containsKey(username);
     }
 
-    public boolean passwordExists (String password) {
-        return mockDB.containsKey(password);
-    }
 
     public void clear () {
         mockDB.clear();

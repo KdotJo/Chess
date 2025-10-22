@@ -20,12 +20,12 @@ public class LoginHandler {
     public void handleLogin (Context ctx) {
         try {
             LoginRequest req = ctx.bodyAsClass(LoginRequest.class);
-            if ((req.password() == null || req.password().isEmpty())) {
-                ctx.status(400).json(Map.of("message", "Error: Missing Password"));
+            if (req.username() == null || req.username().isEmpty()) {
+                ctx.status(400).json(Map.of("message", "Error: Missing Username"));
                 return;
             }
-            if (req.username() == null || req.username().isEmpty()) {
-                ctx.status(400).json(Map.of("message,", "Error: Missing Username"));
+            if ((req.password() == null || req.password().isEmpty())) {
+                ctx.status(400).json(Map.of("message", "Error: Missing Password"));
                 return;
             }
             LoginResult result = userService.login(req);

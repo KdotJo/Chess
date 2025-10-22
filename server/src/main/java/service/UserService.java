@@ -40,11 +40,16 @@ public class UserService {
     }
 
     public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
-        if (!userDao.usernameExists(loginRequest.username()) || !userDao.passwordExists(loginRequest.password())) {
-            throw new DataAccessException("Error: Bad Request");
+        if (userDao.usernameExists(loginRequest.username())) {
+            UserData user = userDao.getUser(loginRequest.username());
+            if (user.getPassword().equals(loginRequest.password())) {
+                String authToken = authDao.createAuth(loginRequest.username());
+                return new LoginResult(loginRequest.username(), authToken);
+            }
+            throw new DataAccessException("Error: Missing Password");
         }
-        String authToken = authDao.createAuth(loginRequest.username());
-        return new LoginResult(loginRequest.username(), authToken);
+        throw new DataAccessException("Error: Bad Request");
+
     }
 
 //    public void logout(LogoutRequest logoutRequest) {
