@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import handlers.RegistrationHandler;
 import io.javalin.*;
 import io.javalin.http.Context;
 
@@ -15,7 +16,7 @@ public class Server {
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
-                .post("/user", this::register);
+                .post("/user", RegistrationHandler::handle);
 
         // Register your endpoints and exception handlers here.
 
