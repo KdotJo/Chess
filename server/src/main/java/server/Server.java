@@ -4,6 +4,7 @@ import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import handlers.DatabaseHandler;
+import handlers.LoginHandler;
 import handlers.RegistrationHandler;
 import io.javalin.*;
 import service.UserService;
@@ -17,6 +18,7 @@ public class Server {
     private final Javalin javalin;
     private final RegistrationHandler registrationHandler;
     private final DatabaseHandler databaseHandler;
+    private final LoginHandler loginHandler;
     final private HashSet<String> validToken = new HashSet<>(Set.of("token1", "token2"));
 
     public Server() {
@@ -26,10 +28,11 @@ public class Server {
         UserService userService = new UserService(userDao, authDao);
         this.registrationHandler = new RegistrationHandler(userService);
         this.databaseHandler = new DatabaseHandler();
+        this.loginHandler = new LoginHandler(userService);
 
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
-//          .post("/session", loginHandler::handleLogin);
+            .post("/session", loginHandler::handleLogin)
             .delete("/db", databaseHandler::clearDB)
             .post("/user", registrationHandler::handleRegistration);
 

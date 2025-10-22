@@ -4,7 +4,9 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.UserData;
+import request.LoginRequest;
 import request.RegisterRequest;
+import result.LoginResult;
 import result.RegisterResult;
 
 import javax.xml.crypto.Data;
@@ -37,10 +39,14 @@ public class UserService {
         return new RegisterResult(registerRequest.username(), authToken);
     }
 
-//    public LoginResult login(LoginRequest loginRequest) {
-//
-//    }
-//
+    public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
+        if (!userDao.usernameExists(loginRequest.username()) || !userDao.passwordExists(loginRequest.password())) {
+            throw new DataAccessException("Error: Bad Request");
+        }
+        String authToken = authDao.createAuth(loginRequest.username());
+        return new LoginResult(loginRequest.username(), authToken);
+    }
+
 //    public void logout(LogoutRequest logoutRequest) {
 //
 //    }
