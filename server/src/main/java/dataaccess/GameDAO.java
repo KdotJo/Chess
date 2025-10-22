@@ -9,11 +9,12 @@ public class GameDAO {
 
     HashMap<String, GameData> mockDB = new HashMap<>();
 
-    //public void createGame () {
+    //public void createGame (UserData userData) {
     // }
 
-    //public void getGame () {
-    // }
+//    public void getGame (int gameID) {
+//
+//    }
 
     //public void listGames () {
     // }
