@@ -20,15 +20,6 @@ public class Server {
         // Register your endpoints and exception handlers here.
 
     }
-    public void register (Context ctx) {
-        ctx.body();
-        String authToken = ctx.header("Authorization");
-        if (validToken.contains(authToken)) {
-            ctx.contentType("application/json");
-            ctx.status(403);
-            ctx.result(new Gson().toJson(Map.of("msg", "Error: Already Taken")));
-        }
-    }
 
 
 
