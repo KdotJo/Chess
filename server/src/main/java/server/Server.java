@@ -29,6 +29,7 @@ public class Server {
 
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
+//          .post("/session", loginHandler::handleLogin);
             .delete("/db", databaseHandler::clearDB)
             .post("/user", registrationHandler::handleRegistration);
 
