@@ -16,13 +16,15 @@ public class Server {
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
-                .post("/user", RegistrationHandler::handle);
+                .post("/user", this::register);
 
         // Register your endpoints and exception handlers here.
 
     }
 
+    public void register (Context ctx) {
 
+    }
 
 
     public int run(int desiredPort) {
