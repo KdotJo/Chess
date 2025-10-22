@@ -30,6 +30,7 @@ public class UserDAO {
         return mockDB.containsKey(username);
     }
 
-    //public void clear () {
-    // }
+    public void clear () {
+        mockDB.clear();
+    }
 }

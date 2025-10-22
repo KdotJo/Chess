@@ -22,4 +22,9 @@ public class AuthDAO {
 
     //public void deleteAuth () {
     // }
+
+    public void clear () {
+        mockDB.clear();
+    }
+
 }
