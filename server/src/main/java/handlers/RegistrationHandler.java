@@ -18,6 +18,10 @@ public class RegistrationHandler {
     public void handleRegistration(Context ctx) {
         try {
             RegisterRequest req = ctx.bodyAsClass(RegisterRequest.class);
+            if ((req.password() == null || req.password().isEmpty() || (req.email() == null || req.email().isEmpty()))) {
+                ctx.status(400).json(Map.of("message", "Error: Password Required"));
+                return;
+            }
             RegisterResult result = userService.register(req);
             ctx.status(200).json(result);
         } catch (DataAccessException e) {
