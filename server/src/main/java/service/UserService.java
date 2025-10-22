@@ -5,11 +5,11 @@ import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.UserData;
 import request.LoginRequest;
+import request.LogoutRequest;
 import request.RegisterRequest;
 import result.LoginResult;
+import result.LogoutResult;
 import result.RegisterResult;
-
-import javax.xml.crypto.Data;
 
 public class UserService {
 
@@ -52,7 +52,11 @@ public class UserService {
 
     }
 
-//    public void logout(LogoutRequest logoutRequest) {
-//
-//    }
+    public LogoutResult logout(LogoutRequest logoutRequest) throws DataAccessException{
+        if (authDao.getAuth(logoutRequest.authToken()) == null) {
+            throw new DataAccessException("Error: No authToken");
+        }
+        authDao.deleteAuth(logoutRequest.authToken());
+        return new LogoutResult();
+    }
 }

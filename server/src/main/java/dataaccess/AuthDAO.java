@@ -20,8 +20,9 @@ public class AuthDAO {
         return mockDB.get(authToken);
     }
 
-    //public void deleteAuth () {
-    // }
+    public void deleteAuth (String authToken) throws DataAccessException{
+        mockDB.remove(authToken);
+    }
 
     public void clear () {
         mockDB.clear();
