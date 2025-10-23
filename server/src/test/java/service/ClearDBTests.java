@@ -9,4 +9,9 @@ public class ClearDBTests {
     public void testClear() {
         Server server = new Server();
     }
+
+    @Test
+    public void testFailedClear() {
+        Server server = new Server();
+    }
 }

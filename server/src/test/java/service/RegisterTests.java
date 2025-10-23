@@ -8,4 +8,9 @@ public class RegisterTests {
     public void testRegister() {
         Server server = new Server();
     }
+
+    @Test
+    public void testFailedRegister() {
+        Server server = new Server();
+    }
 }

@@ -8,4 +8,9 @@ public class ListGamesTests {
     public void testListGame() {
         Server server = new Server();
     }
+
+    @Test
+    public void testFailedListGame() {
+        Server server = new Server();
+    }
 }

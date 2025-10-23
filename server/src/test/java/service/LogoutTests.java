@@ -8,4 +8,8 @@ public class LogoutTests {
     public void testLogout() {
         Server server = new Server();
     }
+    @Test
+    public void testFailedLogout() {
+        Server server = new Server();
+    }
 }

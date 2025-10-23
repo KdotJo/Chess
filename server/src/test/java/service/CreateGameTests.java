@@ -12,4 +12,9 @@ public class CreateGameTests {
     public void testCreateNewGame() {
         Server server = new Server();
     }
+
+    @Test
+    public void testFailedCreateGame() {
+        Server server = new Server();
+    }
 }

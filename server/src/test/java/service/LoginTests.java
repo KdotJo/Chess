@@ -8,4 +8,9 @@ public class LoginTests {
     public void testLogin() {
         Server server = new Server();
     }
+
+    @Test
+    public void testFailLogin() {
+        Server server = new Server();
+    }
 }

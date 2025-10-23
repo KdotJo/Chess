@@ -10,4 +10,10 @@ public class JoinGameTests {
         Server server = new Server();
     }
 
+    @Test
+    public void testFailedJoinGame() {
+        Server server = new Server();
+    }
+
+
 }
