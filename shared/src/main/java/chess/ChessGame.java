@@ -143,7 +143,7 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPos = kingPosition(teamColor);
-        if (kingPos == null) return false;
+        if (kingPos == null) {return false;}
 
         return check(kingPos, teamColor);
     }
