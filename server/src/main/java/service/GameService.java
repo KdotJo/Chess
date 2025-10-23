@@ -7,6 +7,7 @@ import dataaccess.GameDAO;
 import model.GameData;
 import request.CreateGameRequest;
 import result.CreateGameResult;
+import result.JoinGameResult;
 
 import java.util.UUID;
 
@@ -29,5 +30,9 @@ public class GameService {
         GameData gameData = new GameData(gameId, username, null, createGameRequest.gameName(), newGame);
         gameDao.createGame(gameData);
         return new CreateGameResult(gameId);
+    }
+
+    public JoinGameResult join(JoinGameResult joinGameResult) throws DataAccessException {
+        return new JoinGameResult();
     }
 }
