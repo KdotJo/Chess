@@ -11,9 +11,16 @@ import result.RegisterResult;
 import java.util.Map;
 
 public class DatabaseHandler {
-    UserDAO userDao = new UserDAO();
-    AuthDAO authDao = new AuthDAO();
-    GameDAO gameDao = new GameDAO();
+    private final UserDAO userDao;
+    private final GameDAO gameDao;
+    private final AuthDAO authDao;
+
+    public DatabaseHandler(UserDAO userDao, GameDAO gameDao, AuthDAO authDao) {
+
+        this.userDao = userDao;
+        this.gameDao = gameDao;
+        this.authDao = authDao;
+    }
 
     public void clearDB (Context ctx) {
         userDao.clear();

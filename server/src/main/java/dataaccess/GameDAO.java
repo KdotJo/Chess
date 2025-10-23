@@ -4,13 +4,16 @@ import model.GameData;
 import model.UserData;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public class GameDAO {
 
-    HashMap<String, GameData> mockDB = new HashMap<>();
+    HashMap<Integer, GameData> mockDB = new HashMap<>();
 
-    //public void createGame (UserData userData) {
-    // }
+    public void createGame (GameData gameData) {
+        int gameId = gameData.getGameID();
+        mockDB.put(gameId, gameData);
+    }
 
 //    public void getGame (int gameID) {
 //

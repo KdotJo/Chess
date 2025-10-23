@@ -25,7 +25,7 @@ public class LogoutHandler {
             LogoutRequest req = new LogoutRequest(authToken);
             LogoutResult result = userService.logout(req);
             ctx.status(200).json(result);
-        } catch (RuntimeException e) {
+        } catch (DataAccessException e) {
             ctx.status(401).json(Map.of("message", e.getMessage()));
         }
     }

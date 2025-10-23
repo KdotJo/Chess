@@ -11,6 +11,7 @@ import result.LoginResult;
 import result.LogoutResult;
 import result.RegisterResult;
 
+
 public class UserService {
 
     private final AuthDAO authDao;
