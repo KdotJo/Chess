@@ -6,6 +6,7 @@ import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
 import request.CreateGameRequest;
+import request.JoinGameRequest;
 import result.CreateGameResult;
 import result.JoinGameResult;
 
@@ -32,7 +33,31 @@ public class GameService {
         return new CreateGameResult(gameId);
     }
 
-    public JoinGameResult join(JoinGameResult joinGameResult) throws DataAccessException {
+    public JoinGameResult join(String authToken, JoinGameRequest joinGameRequest) throws DataAccessException {
+        if (authDao.getAuth(authToken) == null) {
+            throw new DataAccessException("Error: Unauthorized");
+        }
+        GameData getGame = gameDao.getGame(joinGameRequest.gameID());
+        String teamColor = joinGameRequest.playerColor();
+        String username = authDao.getAuth(authToken).getUsername();
+        if (getGame == null) {
+            throw new DataAccessException("Error: Bad Request");
+        }
+        if (teamColor.equals("WHITE")){
+            if (getGame.getWhiteUsername() != null) {
+                throw new DataAccessException("Error: Team Already Taken");
+            }
+            gameDao.updateGame(getGame.getGameID(), username, getGame.getWhiteUsername());
+        }
+         if (teamColor.equals("BLACK")) {
+             if (getGame.getBlackUsername() == null) {
+                 throw new DataAccessException("Error: Team Already Taken");
+             }
+            gameDao.updateGame(getGame.getGameID(), getGame.getBlackUsername(), username);
+         }
+         if (!teamColor.equals("WHITE") && !teamColor.equals("BlACK")) {
+             throw new DataAccessException("Error: Invalid Team")
+         }
         return new JoinGameResult();
     }
 }

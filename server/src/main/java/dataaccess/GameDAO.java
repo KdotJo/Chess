@@ -15,15 +15,21 @@ public class GameDAO {
         mockDB.put(gameId, gameData);
     }
 
-//    public void getGame (int gameID) {
-//
-//    }
+    public GameData getGame (int gameID) {
+        return mockDB.get(gameID);
+    }
 
     //public void listGames () {
     // }
 
-    //public void updateGame () {
-    // }
+    public void updateGame (int gameID, String whiteUsername, String blackUsername) throws DataAccessException {
+        GameData exists = mockDB.get(gameID);
+        if (exists == null) {
+            throw new DataAccessException("Error: Game doesn't exist");
+        }
+        GameData updated = new GameData(gameID, whiteUsername, blackUsername, exists.getGameName(), exists.getGame());
+        mockDB.put(gameID, updated);
+    }
 
     public void clear () {
         mockDB.clear();
