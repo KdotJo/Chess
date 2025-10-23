@@ -135,7 +135,7 @@ public class ChessPiece {
     private void pawnForwardMoves(List<ChessMove> moves, ChessBoard board, ChessPosition myPosition,
                                   int row, int col, int directions, int startingRow, int promotionRow) {
         int newRow = row + directions;
-        if (!isValidPosition(newRow, col)) return;
+        if (!isValidPosition(newRow, col)) {return;}
 
         ChessPosition nextPosition = new ChessPosition(newRow, col);
         ChessPiece nextPiece = board.getPiece(nextPosition);
@@ -203,7 +203,7 @@ public class ChessPiece {
                 break;
             }
 
-            if (!isSliding) break;
+            if (!isSliding) {break;}
 
             newRow += rowChange;
             newCol += colChange;
