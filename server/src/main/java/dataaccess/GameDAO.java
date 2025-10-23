@@ -3,6 +3,7 @@ package dataaccess;
 import model.GameData;
 import model.UserData;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -19,8 +20,9 @@ public class GameDAO {
         return mockDB.get(gameID);
     }
 
-    //public void listGames () {
-    // }
+    public Collection<GameData> listGames () {
+        return mockDB.values();
+    }
 
     public void updateGame (int gameID, String whiteUsername, String blackUsername) throws DataAccessException {
         GameData exists = mockDB.get(gameID);

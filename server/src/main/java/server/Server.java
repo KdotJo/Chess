@@ -19,6 +19,7 @@ public class Server {
     private final LogoutHandler logoutHandler;
     private final CreateGameHandler createGameHandler;
     private final JoinGameHandler joinGameHandler;
+    private final ListGamesHandler listGamesHandler;
 
     public Server() {
         UserDAO userDao = new UserDAO();
@@ -32,12 +33,14 @@ public class Server {
         this.logoutHandler = new LogoutHandler(userService);
         this.createGameHandler = new CreateGameHandler(gameService);
         this.joinGameHandler = new JoinGameHandler(gameService);
+        this.listGamesHandler = new ListGamesHandler(gameService);
 
         javalin = Javalin.create(config -> {
             config.staticFiles.add("web");
             config.jsonMapper(new JavalinGson());
         })
             .put("/game", joinGameHandler::handleJoinGame)
+            .get("/game", listGamesHandler::handleListGames)
             .post("/game", createGameHandler::handleCreateGame)
             .post("/session", loginHandler::handleLogin)
             .delete("/session", logoutHandler::handleLogout)
