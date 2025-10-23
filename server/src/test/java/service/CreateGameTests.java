@@ -11,6 +11,5 @@ public class CreateGameTests {
     @Test
     public void testCreateNewGame() {
         Server server = new Server();
-
     }
 }
