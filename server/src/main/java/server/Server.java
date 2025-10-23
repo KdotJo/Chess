@@ -5,6 +5,7 @@ import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import handlers.*;
 import io.javalin.*;
+import io.javalin.json.JavalinGson;
 import service.GameService;
 import service.UserService;
 
@@ -32,7 +33,10 @@ public class Server {
         this.createGameHandler = new CreateGameHandler(gameService);
         this.joinGameHandler = new JoinGameHandler(gameService);
 
-        javalin = Javalin.create(config -> config.staticFiles.add("web"))
+        javalin = Javalin.create(config -> {
+            config.staticFiles.add("web");
+            config.jsonMapper(new JavalinGson());
+        })
             .put("/game", joinGameHandler::handleJoinGame)
             .post("/game", createGameHandler::handleCreateGame)
             .post("/session", loginHandler::handleLogin)

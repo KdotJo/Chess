@@ -56,7 +56,7 @@ public class GameService {
             gameDao.updateGame(getGame.getGameID(), getGame.getBlackUsername(), username);
          }
          if (!teamColor.equals("WHITE") && !teamColor.equals("BlACK")) {
-             throw new DataAccessException("Error: Invalid Team")
+             throw new DataAccessException("Error: Invalid Team");
          }
         return new JoinGameResult();
     }
