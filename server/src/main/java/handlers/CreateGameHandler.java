@@ -1,4 +1,35 @@
 package handlers;
 
+import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
+import io.javalin.http.Context;
+import request.CreateGameRequest;
+import result.CreateGameResult;
+import service.GameService;
+
+import java.util.Map;
+
 public class CreateGameHandler {
+    private final GameService gameService;
+
+    public CreateGameHandler(GameService gameService) {
+        this.gameService = gameService;
+    }
+    public void handleCreateGame (Context ctx) throws DataAccessException {
+        try {
+            CreateGameRequest request = ctx.bodyAsClass(CreateGameRequest.class);
+            if (request.authToken() == null || request.authToken().isEmpty()) {
+                ctx.status(401).json(Map.of("message", "Error: Unauthorized"));
+                return;
+            }
+            if (request.gameName() == null || request.gameName().isEmpty()) {
+                ctx.status(400).json(Map.of("message", "Error: Game name is missing"));
+                return;
+            }
+            CreateGameResult result = gameService.create(request);
+            ctx.status(200).json(result);
+        } catch (DataAccessException e) {
+            ctx.status(401).json(Map.of("message", e.getMessage()));
+        }
+    }
 }
