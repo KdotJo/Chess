@@ -54,29 +54,29 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        List<ChessMove> valid_moves = new ArrayList<>();
+        List<ChessMove> validMoves = new ArrayList<>();
         ChessPiece piece = board.getPiece(startPosition);
-        ChessBoard current_board = this.board;
-        if (piece == null) {return valid_moves;}
+        ChessBoard currentBoard = this.board;
+        if (piece == null) {return validMoves;}
 
-        Collection<ChessMove> temp_moves = piece.pieceMoves(board, startPosition);
-        for (ChessMove move : temp_moves) {
-            ChessPosition temp_start = move.getStartPosition();
-            ChessPosition temp_end = move.getEndPosition();
-            ChessBoard temp_board = board.deepCopy();
-            ChessPiece temp_piece = temp_board.getPiece(temp_start);
-            temp_board.addPiece(temp_start, null);
+        Collection<ChessMove> tempMoves = piece.pieceMoves(board, startPosition);
+        for (ChessMove move : tempMoves) {
+            ChessPosition tempStart = move.getStartPosition();
+            ChessPosition tempEnd = move.getEndPosition();
+            ChessBoard tempBoard = board.deepCopy();
+            ChessPiece tempPiece = tempBoard.getPiece(tempStart);
+            tempBoard.addPiece(tempStart, null);
 
-            if (temp_board.getPiece(temp_end) == null || temp_board.getPiece(temp_end).getTeamColor() != temp_piece.getTeamColor()) {
-                temp_board.addPiece(temp_end, temp_piece);
-                this.board =  temp_board;
-                if (!isInCheck(temp_piece.getTeamColor())) {
-                    valid_moves.add(move);
+            if (tempBoard.getPiece(tempEnd) == null || tempBoard.getPiece(tempEnd).getTeamColor() != tempPiece.getTeamColor()) {
+                tempBoard.addPiece(tempEnd, tempPiece);
+                this.board = tempBoard;
+                if (!isInCheck(tempPiece.getTeamColor())) {
+                    validMoves.add(move);
                 }
-                this.board = current_board;
+                this.board = currentBoard;
             }
         }
-        return valid_moves;
+        return validMoves;
     }
 
     /**
@@ -170,21 +170,22 @@ public class ChessGame {
 
                 if ((piece != null) && (piece.getTeamColor() == teamColor)) {
                     Collection<ChessMove> moves = piece.pieceMoves(board, position);
-                    ChessBoard current_board = this.board;
+                    ChessBoard currentBoard = this.board;
 
                     for (ChessMove move : moves) {
                         ChessPosition startPosition = move.getStartPosition();
                         ChessPosition endPosition = move.getEndPosition();
-                        ChessBoard temp_board = board.deepCopy();
-                        ChessPiece temp_piece = temp_board.getPiece(startPosition);
-                        temp_board.addPiece(startPosition, null);
-                        if (temp_board.getPiece(endPosition) == null || temp_board.getPiece(endPosition).getTeamColor() != temp_piece.getTeamColor()) {
-                            temp_board.addPiece(endPosition, temp_piece);
-                            this.board = temp_board;
-                            if (!isInCheck(temp_piece.getTeamColor())) {
+                        ChessBoard tempBoard = board.deepCopy();
+                        ChessPiece tempPiece = tempBoard.getPiece(startPosition);
+                        tempBoard.addPiece(startPosition, null);
+                        if (tempBoard.getPiece(endPosition) == null ||
+                                tempBoard.getPiece(endPosition).getTeamColor() != tempPiece.getTeamColor()) {
+                            tempBoard.addPiece(endPosition, tempPiece);
+                            this.board = tempBoard;
+                            if (!isInCheck(tempPiece.getTeamColor())) {
                                 return false;
                             }
-                            this.board = current_board;
+                            this.board = currentBoard;
                         }
                     }
                 }
@@ -208,24 +209,25 @@ public class ChessGame {
 
                 if ((piece != null) && (piece.getTeamColor() == teamColor)) {
                     Collection<ChessMove> moves = piece.pieceMoves(board, position);
-                    ChessBoard current_board = this.board;
+                    ChessBoard currentBoard = this.board;
 
                     for (ChessMove move : moves) {
                         ChessPosition startPosition = move.getStartPosition();
                         ChessPosition endPosition = move.getEndPosition();
-                        ChessBoard temp_board = board.deepCopy();
-                        ChessPiece temp_piece = temp_board.getPiece(startPosition);
-                        temp_board.addPiece(startPosition, null);
-                        if (temp_piece.getPieceType() == ChessPiece.PieceType.KING) {
-                            if (isInCheck(temp_piece.getTeamColor())) {return false;}
+                        ChessBoard tempBoard = board.deepCopy();
+                        ChessPiece tempPiece = tempBoard.getPiece(startPosition);
+                        tempBoard.addPiece(startPosition, null);
+                        if (tempPiece.getPieceType() == ChessPiece.PieceType.KING) {
+                            if (isInCheck(tempPiece.getTeamColor())) {return false;}
                         }
-                        if (temp_board.getPiece(endPosition) == null || temp_board.getPiece(endPosition).getTeamColor() != temp_piece.getTeamColor()) {
-                            temp_board.addPiece(endPosition, temp_piece);
-                            this.board = temp_board;
-                            if (!isInCheck(temp_piece.getTeamColor())) {
+                        if (tempBoard.getPiece(endPosition) == null ||
+                                tempBoard.getPiece(endPosition).getTeamColor() != tempPiece.getTeamColor()) {
+                            tempBoard.addPiece(endPosition, tempPiece);
+                            this.board = tempBoard;
+                            if (!isInCheck(tempPiece.getTeamColor())) {
                                 return false;
                             }
-                            this.board = current_board;
+                            this.board = currentBoard;
                         }
                     }
                 }
@@ -253,8 +255,8 @@ public class ChessGame {
     }
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {return true;}
+        if (o == null || getClass() != o.getClass()) {return false;}
         ChessGame that = (ChessGame) o;
         return Objects.equals(board, that.board) && color == that.color;
     }

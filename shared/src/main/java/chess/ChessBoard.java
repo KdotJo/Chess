@@ -63,7 +63,7 @@ public class ChessBoard {
             board[1][column] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
             board[6][column] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
         }
-        ChessPiece.PieceType[] back_ranks = {
+        ChessPiece.PieceType[] backRanks = {
                 ChessPiece.PieceType.ROOK,
                 ChessPiece.PieceType.KNIGHT,
                 ChessPiece.PieceType.BISHOP,
@@ -74,8 +74,8 @@ public class ChessBoard {
                 ChessPiece.PieceType.ROOK
         };
         for (int column = 0; column < 8; column++) {
-            board[0][column] =  new ChessPiece(ChessGame.TeamColor.WHITE, back_ranks[column]);
-            board[7][column] =  new ChessPiece(ChessGame.TeamColor.BLACK, back_ranks[column]);
+            board[0][column] =  new ChessPiece(ChessGame.TeamColor.WHITE, backRanks[column]);
+            board[7][column] =  new ChessPiece(ChessGame.TeamColor.BLACK, backRanks[column]);
         }
     }
     @Override
