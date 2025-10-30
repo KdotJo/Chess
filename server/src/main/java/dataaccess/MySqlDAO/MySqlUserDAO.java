@@ -7,8 +7,6 @@ import dataaccess.DataAccessException;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
-import javax.xml.crypto.Data;
-
 
 public class MySqlUserDAO implements UserDataAccess {
 
@@ -71,12 +69,21 @@ public class MySqlUserDAO implements UserDataAccess {
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
-        return null;
-    }
-
-    @Override
-    public boolean usernameExists(String username) throws DataAccessException {
-        return false;
+        var query = "SELECT * FROM users WHERE username = ?";
+        try (Connection connection  = DatabaseManager.getConnection();
+            PreparedStatement queryStatement = connection.prepareStatement(query)) {
+            queryStatement.setString(1, username);
+            ResultSet qr = queryStatement.executeQuery();
+            if (qr.next()) {
+                return new UserData(
+                        qr.getString("username"),
+                        qr.getString("password"),
+                        qr.getString("email"));
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new DataAccessException("Unauthorized", e);
+        }
     }
 
     @Override

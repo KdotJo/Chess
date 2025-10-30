@@ -11,7 +11,5 @@ public interface UserDataAccess {
 
     UserData getUser(String username) throws DataAccessException;
 
-    boolean usernameExists(String username) throws DataAccessException;
-
     void clear() throws DataAccessException;
 }
