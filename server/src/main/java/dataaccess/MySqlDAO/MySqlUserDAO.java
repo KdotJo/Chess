@@ -17,15 +17,15 @@ public class MySqlUserDAO implements UserDataAccess {
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS users (
-            'username' varchar(256) NOT NULL,
-            'password' varchar(256) NOT NULL,
-            'email' varchar(256) NOT NULL,
-            PRIMARY KEY ('username)
+            username varchar(256) NOT NULL,
+            password varchar(256) NOT NULL,
+            email varchar(256) NOT NULL,
+            PRIMARY KEY (username)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
 
-    private void configureDatabase() throws SQLException, DataAccessException {
+    private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (Connection connection = DatabaseManager.getConnection()) {
             for (String statement : createStatements) {
@@ -33,8 +33,8 @@ public class MySqlUserDAO implements UserDataAccess {
                     preparedStatement.executeUpdate();
                 }
             }
-        } catch (SQLException ex) {
-            throw new SQLException("Unable to configure database", ex.getMessage());
+        } catch (SQLException e) {
+            throw new DataAccessException("Unable to configure database", e);
         }
     }
 
@@ -88,7 +88,13 @@ public class MySqlUserDAO implements UserDataAccess {
 
     @Override
     public void clear() throws DataAccessException {
-
+        var statement = "TRUNCATE TABLE users";
+        try (Connection conn = DatabaseManager.getConnection();
+            PreparedStatement queryStatment = conn.prepareStatement(statement)) {
+            queryStatment.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Unauthorized", e);
+        }
     }
 
 
