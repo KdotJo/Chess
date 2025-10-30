@@ -1,8 +1,8 @@
 package handlers;
 
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.memoryDAO.MemoryAuthDAO;
+import dataaccess.memoryDAO.MemoryGameDAO;
+import dataaccess.memoryDAO.MemoryUserDAO;
 import io.javalin.http.Context;
 
 import java.util.Map;

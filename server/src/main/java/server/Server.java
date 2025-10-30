@@ -1,8 +1,8 @@
 package server;
 
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.memoryDAO.MemoryAuthDAO;
+import dataaccess.memoryDAO.MemoryGameDAO;
+import dataaccess.memoryDAO.MemoryUserDAO;
 import handlers.*;
 import io.javalin.*;
 import io.javalin.json.JavalinGson;
