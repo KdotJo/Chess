@@ -1,12 +1,13 @@
 package dataaccess.memoryDAO;
 
 import dataaccess.DataAccessException;
+import dataaccess.interfaces.AuthDataAccess;
 import model.AuthData;
 
 import java.util.HashMap;
 import java.util.UUID;
 
-public class MemoryAuthDAO {
+public class MemoryAuthDAO implements AuthDataAccess {
 
     HashMap<String, AuthData> mockDB = new HashMap<>();
 

@@ -1,12 +1,13 @@
 package dataaccess.memoryDAO;
 
 import dataaccess.DataAccessException;
+import dataaccess.interfaces.GameDataAccess;
 import model.GameData;
 
 import java.util.Collection;
 import java.util.HashMap;
 
-public class MemoryGameDAO {
+public class MemoryGameDAO implements GameDataAccess {
 
     HashMap<Integer, GameData> mockDB = new HashMap<>();
 
