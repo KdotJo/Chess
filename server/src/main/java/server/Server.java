@@ -1,5 +1,8 @@
 package server;
 
+import dataaccess.interfaces.AuthDataAccess;
+import dataaccess.interfaces.GameDataAccess;
+import dataaccess.interfaces.UserDataAccess;
 import dataaccess.memoryDAO.MemoryAuthDAO;
 import dataaccess.memoryDAO.MemoryGameDAO;
 import dataaccess.memoryDAO.MemoryUserDAO;
@@ -22,13 +25,13 @@ public class Server {
     private final ListGamesHandler listGamesHandler;
 
     public Server() {
-        MemoryUserDAO memoryUserDao = new MemoryUserDAO();
-        MemoryAuthDAO memoryAuthDao = new MemoryAuthDAO();
-        MemoryGameDAO memoryGameDao = new MemoryGameDAO();
-        UserService userService = new UserService(memoryUserDao, memoryAuthDao);
-        GameService gameService = new GameService(memoryAuthDao, memoryGameDao);
+        UserDataAccess UserDao = new MemoryUserDAO();
+        AuthDataAccess AuthDao = new MemoryAuthDAO();
+        GameDataAccess GameDao = new MemoryGameDAO();
+        UserService userService = new UserService(UserDao, AuthDao);
+        GameService gameService = new GameService(AuthDao, GameDao);
         this.registrationHandler = new RegistrationHandler(userService);
-        this.databaseHandler = new DatabaseHandler(memoryUserDao, memoryGameDao, memoryAuthDao);
+        this.databaseHandler = new DatabaseHandler(UserDao, GameDao, AuthDao);
         this.loginHandler = new LoginHandler(userService);
         this.logoutHandler = new LogoutHandler(userService);
         this.createGameHandler = new CreateGameHandler(gameService);

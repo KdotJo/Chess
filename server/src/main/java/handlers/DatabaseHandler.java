@@ -1,28 +1,31 @@
 package handlers;
 
+import dataaccess.DataAccessException;
+import dataaccess.interfaces.AuthDataAccess;
+import dataaccess.interfaces.GameDataAccess;
+import dataaccess.interfaces.UserDataAccess;
 import dataaccess.memoryDAO.MemoryAuthDAO;
 import dataaccess.memoryDAO.MemoryGameDAO;
-import dataaccess.memoryDAO.MemoryUserDAO;
 import io.javalin.http.Context;
 
 import java.util.Map;
 
 public class DatabaseHandler {
-    private final MemoryUserDAO memoryUserDao;
-    private final MemoryGameDAO memoryGameDao;
-    private final MemoryAuthDAO memoryAuthDao;
+    private final UserDataAccess UserDao;
+    private final GameDataAccess GameDao;
+    private final AuthDataAccess AuthDao;
 
-    public DatabaseHandler(MemoryUserDAO memoryUserDao, MemoryGameDAO memoryGameDao, MemoryAuthDAO memoryAuthDao) {
+    public DatabaseHandler(UserDataAccess UserDao, GameDataAccess GameDao, AuthDataAccess AuthDao) {
 
-        this.memoryUserDao = memoryUserDao;
-        this.memoryGameDao = memoryGameDao;
-        this.memoryAuthDao = memoryAuthDao;
+        this.UserDao = UserDao;
+        this.GameDao = GameDao;
+        this.AuthDao = AuthDao;
     }
 
-    public void clearDB (Context ctx) {
-        memoryUserDao.clear();
-        memoryAuthDao.clear();
-        memoryGameDao.clear();
+    public void clearDB (Context ctx) throws DataAccessException {
+        UserDao.clear();
+        AuthDao.clear();
+        GameDao.clear();
         ctx.status(200).json(Map.of());
     }
 }

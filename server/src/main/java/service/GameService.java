@@ -1,6 +1,8 @@
 package service;
 
 import chess.ChessGame;
+import dataaccess.interfaces.AuthDataAccess;
+import dataaccess.interfaces.GameDataAccess;
 import dataaccess.memoryDAO.MemoryAuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.memoryDAO.MemoryGameDAO;
@@ -15,41 +17,41 @@ import java.util.Collection;
 import java.util.UUID;
 
 public class GameService {
-    private final MemoryAuthDAO memoryAuthDao;
-    private final MemoryGameDAO memoryGameDao;
+    private final AuthDataAccess AuthDao;
+    private final GameDataAccess GameDao;
 
-    public GameService(MemoryAuthDAO memoryAuthDao, MemoryGameDAO memoryGameDao) {
-        this.memoryAuthDao = memoryAuthDao;
-        this.memoryGameDao = memoryGameDao;
+    public GameService(AuthDataAccess AuthDao, GameDataAccess GameDao) {
+        this.AuthDao = AuthDao;
+        this.GameDao = GameDao;
     }
 
     public ListGamesResult list(String authToken) throws DataAccessException {
-        if (memoryAuthDao.getAuth(authToken) == null) {
+        if (AuthDao.getAuth(authToken) == null) {
             throw new DataAccessException("Error: Unauthorized");
         }
-        Collection<GameData> games = memoryGameDao.listGames();
+        Collection<GameData> games = GameDao.listGames();
         return new ListGamesResult(games);
     }
 
     public CreateGameResult create(String authToken, CreateGameRequest createGameRequest) throws DataAccessException {
-        if (memoryAuthDao.getAuth(authToken) == null) {
+        if (AuthDao.getAuth(authToken) == null) {
             throw new DataAccessException("Error: Unauthorized");
         }
         int gameId = Math.abs(UUID.randomUUID().hashCode());
         ChessGame newGame = new ChessGame();
         GameData gameData = new GameData(gameId, null, null, createGameRequest.gameName(), newGame);
-        memoryGameDao.createGame(gameData);
+        GameDao.createGame(gameData);
         return new CreateGameResult(gameId);
     }
 
     public JoinGameResult join(String authToken, JoinGameRequest joinGameRequest) throws DataAccessException {
 
-        if (memoryAuthDao.getAuth(authToken) == null) {
+        if (AuthDao.getAuth(authToken) == null) {
             throw new DataAccessException("Error: Unauthorized");
         }
-        GameData getGame = memoryGameDao.getGame(joinGameRequest.gameID());
+        GameData getGame = GameDao.getGame(joinGameRequest.gameID());
         String teamColor = joinGameRequest.playerColor();
-        String username = memoryAuthDao.getAuth(authToken).getUsername();
+        String username = AuthDao.getAuth(authToken).getUsername();
         if (getGame == null) {
             throw new DataAccessException("Error: Bad Request");
         }
@@ -57,13 +59,13 @@ public class GameService {
             if (getGame.getWhiteUsername() != null && !getGame.getWhiteUsername().equals(username)) {
                 throw new DataAccessException("Error: Team Already Taken");
             }
-            memoryGameDao.updateGame(getGame.getGameID(), username, getGame.getBlackUsername());
+            GameDao.updateGame(getGame.getGameID(), username, getGame.getBlackUsername());
         }
         if (teamColor.equals("BLACK")) {
             if (getGame.getBlackUsername() != null && !getGame.getBlackUsername().equals(username)) {
                 throw new DataAccessException("Error: Team Already Taken");
             }
-            memoryGameDao.updateGame(getGame.getGameID(), getGame.getWhiteUsername(), username);
+            GameDao.updateGame(getGame.getGameID(), getGame.getWhiteUsername(), username);
         }
          if (!teamColor.equals("WHITE") && !teamColor.equals("BLACK")) {
              throw new DataAccessException("Error: Invalid Team");

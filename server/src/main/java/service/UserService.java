@@ -1,8 +1,8 @@
 package service;
 
-import dataaccess.memoryDAO.MemoryAuthDAO;
+import dataaccess.interfaces.AuthDataAccess;
+import dataaccess.interfaces.UserDataAccess;
 import dataaccess.DataAccessException;
-import dataaccess.memoryDAO.MemoryUserDAO;
 import model.UserData;
 import request.LoginRequest;
 import request.LogoutRequest;
@@ -14,12 +14,12 @@ import result.RegisterResult;
 
 public class UserService {
 
-    private final MemoryAuthDAO memoryAuthDao;
-    private final MemoryUserDAO memoryUserDao;
+    private final AuthDataAccess AuthDao;
+    private final UserDataAccess UserDao;
 
-    public UserService (MemoryUserDAO memoryUserDao, MemoryAuthDAO memoryAuthDao) {
-        this.memoryAuthDao = memoryAuthDao;
-        this.memoryUserDao = memoryUserDao;
+    public UserService (UserDataAccess UserDao, AuthDataAccess AuthDao) {
+        this.AuthDao = AuthDao;
+        this.UserDao = UserDao;
     }
 
     public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
@@ -31,20 +31,20 @@ public class UserService {
         // 5. Generate auth token (use AuthDAO)
         // 6. Return RegisterResult with username and authToken
 
-        if (memoryUserDao.usernameExists(registerRequest.username())) {
+        if (UserDao.getUser(registerRequest.username()) != null) {
             throw new DataAccessException("Error: Username already taken");
         }
         UserData newUser = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
-        memoryUserDao.createUser(newUser);
-        String authToken = memoryAuthDao.createAuth(registerRequest.username());
+        UserDao.createUser(newUser);
+        String authToken = AuthDao.createAuth(registerRequest.username());
         return new RegisterResult(registerRequest.username(), authToken);
     }
 
     public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
-        if (memoryUserDao.usernameExists(loginRequest.username())) {
-            UserData user = memoryUserDao.getUser(loginRequest.username());
+        if (UserDao.getUser(loginRequest.username()) != null) {
+            UserData user = UserDao.getUser(loginRequest.username());
             if (user.getPassword().equals(loginRequest.password())) {
-                String authToken = memoryAuthDao.createAuth(loginRequest.username());
+                String authToken = AuthDao.createAuth(loginRequest.username());
                 return new LoginResult(loginRequest.username(), authToken);
             }
             throw new DataAccessException("Error: Missing Password");
@@ -54,10 +54,10 @@ public class UserService {
     }
 
     public LogoutResult logout(LogoutRequest logoutRequest) throws DataAccessException{
-        if (memoryAuthDao.getAuth(logoutRequest.authToken()) == null) {
+        if (AuthDao.getAuth(logoutRequest.authToken()) == null) {
             throw new DataAccessException("Error: No authToken");
         }
-        memoryAuthDao.deleteAuth(logoutRequest.authToken());
+        AuthDao.deleteAuth(logoutRequest.authToken());
         return new LogoutResult();
     }
 }
