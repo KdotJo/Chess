@@ -4,7 +4,7 @@ import model.UserData;
 
 import java.util.HashMap;
 
-public class UserDAO {
+public class MemoryUserDAO {
 
     HashMap<String, UserData> mockDB = new HashMap<>();
 

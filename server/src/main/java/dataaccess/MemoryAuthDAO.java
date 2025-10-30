@@ -5,7 +5,7 @@ import model.AuthData;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class AuthDAO {
+public class MemoryAuthDAO {
 
     HashMap<String, AuthData> mockDB = new HashMap<>();
 

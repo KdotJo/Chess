@@ -1,8 +1,8 @@
 package server;
 
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.UserDAO;
+import dataaccess.MemoryAuthDAO;
+import dataaccess.MemoryGameDAO;
+import dataaccess.MemoryUserDAO;
 import handlers.*;
 import io.javalin.*;
 import io.javalin.json.JavalinGson;
@@ -22,13 +22,13 @@ public class Server {
     private final ListGamesHandler listGamesHandler;
 
     public Server() {
-        UserDAO userDao = new UserDAO();
-        AuthDAO authDao = new AuthDAO();
-        GameDAO gameDao = new GameDAO();
-        UserService userService = new UserService(userDao, authDao);
-        GameService gameService = new GameService(authDao, gameDao);
+        MemoryUserDAO memoryUserDao = new MemoryUserDAO();
+        MemoryAuthDAO memoryAuthDao = new MemoryAuthDAO();
+        MemoryGameDAO memoryGameDao = new MemoryGameDAO();
+        UserService userService = new UserService(memoryUserDao, memoryAuthDao);
+        GameService gameService = new GameService(memoryAuthDao, memoryGameDao);
         this.registrationHandler = new RegistrationHandler(userService);
-        this.databaseHandler = new DatabaseHandler(userDao, gameDao, authDao);
+        this.databaseHandler = new DatabaseHandler(memoryUserDao, memoryGameDao, memoryAuthDao);
         this.loginHandler = new LoginHandler(userService);
         this.logoutHandler = new LogoutHandler(userService);
         this.createGameHandler = new CreateGameHandler(gameService);

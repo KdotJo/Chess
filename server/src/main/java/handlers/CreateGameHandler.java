@@ -1,6 +1,5 @@
 package handlers;
 
-import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import request.CreateGameRequest;

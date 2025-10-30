@@ -186,7 +186,7 @@ public class ChessPiece {
     }
 
      private void addMoves(List<ChessMove> moves, ChessBoard board, ChessPosition myPosition,
-                          int startRow, int startCol, int rowChange, int colChange, boolean isSliding) {
+                           int startRow, int startCol, int rowChange, int colChange, boolean isSliding) {
         int newRow = startRow + rowChange;
         int newCol = startCol + colChange;
 

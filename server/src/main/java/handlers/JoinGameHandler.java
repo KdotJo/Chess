@@ -1,8 +1,6 @@
 package handlers;
 
 import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
-import request.CreateGameRequest;
 import request.JoinGameRequest;
 import result.JoinGameResult;
 import service.GameService;
