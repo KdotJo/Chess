@@ -1,4 +1,58 @@
 package dataaccess.MySqlDAO;
 
-public class MySqlAuthDAO {
+import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
+import dataaccess.interfaces.AuthDataAccess;
+import model.AuthData;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+
+public class MySqlAuthDAO implements AuthDataAccess {
+
+    public MySqlAuthDAO() throws DataAccessException {
+        configureDatabase();
+    }
+
+    private final String[] createStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS authTokens (
+            authToken varchar(256) NOT NULL AUTO_INCREMENT,
+            username varchar(256) DEFAULT NOT NULL,
+            PRIMARY KEY (authToken)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+    };
+
+    private void configureDatabase() throws DataAccessException {
+        DatabaseManager.createDatabase();
+        try (Connection connection = DatabaseManager.getConnection()) {
+            for (String statement : createStatements) {
+                try (var preparedStatement = connection.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Unable to configure database", e);
+        }
+    }
+    @Override
+    public String createAuth(String username) throws DataAccessException {
+        return "";
+    }
+
+    @Override
+    public AuthData getAuth(String authToken) throws DataAccessException {
+        return null;
+    }
+
+    @Override
+    public void deleteAuth(String authToken) throws DataAccessException {
+
+    }
+
+    @Override
+    public void clear() throws DataAccessException {
+
+    }
 }

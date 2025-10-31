@@ -10,7 +10,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 public class MySqlUserDAO implements UserDataAccess {
 
-    public MySqlUserDAO() throws DataAccessException, SQLException {
+    public MySqlUserDAO() throws DataAccessException {
         configureDatabase();
     }
 
@@ -40,23 +40,13 @@ public class MySqlUserDAO implements UserDataAccess {
 
     @Override
     public void createUser(UserData userData) throws DataAccessException {
-        var query = "SELECT * FROM users WHERE username = ?";
+        var createNewUser = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement queryStatement = connection.prepareStatement(query)) {
-            queryStatement.setString(1, userData.getUsername());
-            ResultSet queryResults = queryStatement.executeQuery();
-            if (queryResults.next()) {
-                throw new DataAccessException("Username Already Taken");
-            }
-            var createNewUser = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
-            PreparedStatement insertUserStatement = connection.prepareStatement(createNewUser);
-            setUserValues(insertUserStatement, userData);
-            int results = insertUserStatement.executeUpdate();
-            if (results != 1) {
-                throw new DataAccessException("User Creation Failed");
-            }
+             PreparedStatement queryStatement = connection.prepareStatement(createNewUser)) {
+            setUserValues(queryStatement, userData);
+            queryStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Unauthorized Error", e);
+            throw new DataAccessException("User Creation Failed", e);
         } ;
     }
 
@@ -82,7 +72,7 @@ public class MySqlUserDAO implements UserDataAccess {
             }
             return null;
         } catch (SQLException e) {
-            throw new DataAccessException("Unauthorized", e);
+            throw new DataAccessException("Failed to get user", e);
         }
     }
 
@@ -90,12 +80,10 @@ public class MySqlUserDAO implements UserDataAccess {
     public void clear() throws DataAccessException {
         var statement = "TRUNCATE TABLE users";
         try (Connection conn = DatabaseManager.getConnection();
-            PreparedStatement queryStatment = conn.prepareStatement(statement)) {
-            queryStatment.executeUpdate();
+            PreparedStatement queryStatement = conn.prepareStatement(statement)) {
+            queryStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Unauthorized", e);
+            throw new DataAccessException("Failed to clear table", e);
         }
     }
-
-
 }

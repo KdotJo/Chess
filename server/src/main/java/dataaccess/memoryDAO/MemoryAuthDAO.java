@@ -23,7 +23,6 @@ public class MemoryAuthDAO implements AuthDataAccess {
     }
 
     public void deleteAuth (String authToken) throws DataAccessException{
-        if (!mockDB.containsKey(authToken)) {throw new DataAccessException("Error: Unauthorized");}
         mockDB.remove(authToken);
     }
 

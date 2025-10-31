@@ -26,9 +26,6 @@ public class MemoryGameDAO implements GameDataAccess {
 
     public void updateGame (int gameID, String whiteUsername, String blackUsername) throws DataAccessException {
         GameData exists = mockDB.get(gameID);
-        if (exists == null) {
-            throw new DataAccessException("Error: Game doesn't exist");
-        }
         GameData updated = new GameData(gameID, whiteUsername, blackUsername, exists.getGameName(), exists.getGame());
         mockDB.put(gameID, updated);
     }
