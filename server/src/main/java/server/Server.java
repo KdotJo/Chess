@@ -1,5 +1,7 @@
 package server;
 
+import dataaccess.DataAccessException;
+import dataaccess.MySqlDAO.MySqlUserDAO;
 import dataaccess.interfaces.AuthDataAccess;
 import dataaccess.interfaces.GameDataAccess;
 import dataaccess.interfaces.UserDataAccess;
@@ -25,19 +27,22 @@ public class Server {
     private final ListGamesHandler listGamesHandler;
 
     public Server() {
-        UserDataAccess UserDao = new MemoryUserDAO();
-        AuthDataAccess AuthDao = new MemoryAuthDAO();
-        GameDataAccess GameDao = new MemoryGameDAO();
-        UserService userService = new UserService(UserDao, AuthDao);
-        GameService gameService = new GameService(AuthDao, GameDao);
-        this.registrationHandler = new RegistrationHandler(userService);
-        this.databaseHandler = new DatabaseHandler(UserDao, GameDao, AuthDao);
-        this.loginHandler = new LoginHandler(userService);
-        this.logoutHandler = new LogoutHandler(userService);
-        this.createGameHandler = new CreateGameHandler(gameService);
-        this.joinGameHandler = new JoinGameHandler(gameService);
-        this.listGamesHandler = new ListGamesHandler(gameService);
-
+        try {
+            UserDataAccess UserDao = new MySqlUserDAO();
+            AuthDataAccess AuthDao = new MemoryAuthDAO();
+            GameDataAccess GameDao = new MemoryGameDAO();
+            UserService userService = new UserService(UserDao, AuthDao);
+            GameService gameService = new GameService(AuthDao, GameDao);
+            this.registrationHandler = new RegistrationHandler(userService);
+            this.databaseHandler = new DatabaseHandler(UserDao, GameDao, AuthDao);
+            this.loginHandler = new LoginHandler(userService);
+            this.logoutHandler = new LogoutHandler(userService);
+            this.createGameHandler = new CreateGameHandler(gameService);
+            this.joinGameHandler = new JoinGameHandler(gameService);
+            this.listGamesHandler = new ListGamesHandler(gameService);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Internal Server Error", e);
+        }
         javalin = Javalin.create(config -> {
             config.staticFiles.add("web");
             config.jsonMapper(new JavalinGson());

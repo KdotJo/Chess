@@ -1,11 +1,17 @@
 package dataaccess.MySqlDAO;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
 import dataaccess.interfaces.GameDataAccess;
 import model.GameData;
 
+import javax.xml.crypto.Data;
+import javax.xml.transform.Result;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
@@ -43,11 +49,33 @@ public class MySqlGameDAO implements GameDataAccess {
 
     @Override
     public void createGame(GameData gameData) throws DataAccessException {
+        var createNewGame = "INSERT INTO games " +
+                "(gameId, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseManager.getConnection();
+            PreparedStatement preparedStatement = conn.prepareStatement(createNewGame)) {
 
+        } catch (SQLException e) {
+            throw new DataAccessException("Failed to create game", e);
+        }
     }
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
+        var query = "SELECT * FROM games WHERE gameID = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setInt(1, gameID);
+            ResultSet result = preparedStatement.executeQuery();
+            if (result.next()) {
+                String json = result.getString("game");
+                ChessGame game = new Gson().fromJson(json, ChessGame.class);
+                return new GameData(result.getInt("gameID"), result.getString("whiteUsername"),
+                        result.getString("blackUsername"), result.getString("gameName"),
+                        game);
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Failed to get game", e);
+        }
         return null;
     }
 
