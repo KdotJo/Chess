@@ -53,23 +53,20 @@ public class GameService {
         String teamColor = joinGameRequest.playerColor();
         String username = AuthDao.getAuth(authToken).getUsername();
         if (getGame == null) {
-            throw new DataAccessException("Error: Bad Request");
+            throw new DataAccessException("Error: Can't Get Game");
         }
         if (teamColor.equals("WHITE")) {
             if (getGame.getWhiteUsername() != null && !getGame.getWhiteUsername().equals(username)) {
-                throw new DataAccessException("Error: Team Already Taken");
+                throw new DataAccessException("Error: White Team Already Taken");
             }
             GameDao.updateGame(getGame.getGameID(), username, getGame.getBlackUsername());
         }
         if (teamColor.equals("BLACK")) {
             if (getGame.getBlackUsername() != null && !getGame.getBlackUsername().equals(username)) {
-                throw new DataAccessException("Error: Team Already Taken");
+                throw new DataAccessException("Error: Black Team Already Taken");
             }
             GameDao.updateGame(getGame.getGameID(), getGame.getWhiteUsername(), username);
         }
-         if (!teamColor.equals("WHITE") && !teamColor.equals("BLACK")) {
-             throw new DataAccessException("Error: Invalid Team");
-         }
         return new JoinGameResult();
     }
 }

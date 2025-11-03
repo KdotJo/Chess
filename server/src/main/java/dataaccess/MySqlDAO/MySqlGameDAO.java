@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -92,12 +93,31 @@ public class MySqlGameDAO implements GameDataAccess {
 
     @Override
     public Collection<GameData> listGames() throws DataAccessException {
-        return List.of();
+        var query = "SELECT * FROM games";
+        Collection<GameData> allGames = new ArrayList<>();
+        try (Connection conn = DatabaseManager.getConnection();
+            PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            ResultSet results = preparedStatement.executeQuery();
+            while (results.next()) {
+                int gameId = results.getInt("gameID");
+                String whiteUsername = results.getString("whiteUsername");
+                String blackUsername = results.getString("blackUsername");
+                String gameName = results.getString("gameName");
+                String json = results.getString("game");
+                ChessGame game = new Gson().fromJson(json, ChessGame.class);
+                allGames.add(new GameData(gameId, whiteUsername, blackUsername,
+                        gameName, game));
+            }
+            return allGames;
+        } catch (SQLException e) {
+            throw new DataAccessException("Failed to list games", e);
+        }
     }
 
     @Override
     public void updateGame(int gameID, String whiteUsername, String blackUsername) throws DataAccessException {
-
+        var whiteQuery = "UPDATE games SET whiteUsername = ? WHERE game = ?";
+        var blackQuery = "UPDATE games SET blackUsername = ? WHERE game = ?";
     }
 
     @Override
