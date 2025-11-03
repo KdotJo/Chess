@@ -6,6 +6,7 @@ import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
 import dataaccess.interfaces.GameDataAccess;
 import model.GameData;
+import service.GameService;
 
 import javax.xml.crypto.Data;
 import javax.xml.transform.Result;
@@ -53,10 +54,20 @@ public class MySqlGameDAO implements GameDataAccess {
                 "(gameId, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseManager.getConnection();
             PreparedStatement preparedStatement = conn.prepareStatement(createNewGame)) {
-
+            setGameValues(preparedStatement, gameData);
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException("Failed to create game", e);
         }
+    }
+
+    private void setGameValues (PreparedStatement values, GameData gameData) throws SQLException {
+        values.setInt(1, gameData.getGameID());
+        values.setString(2, gameData.getWhiteUsername());
+        values.setString(3, gameData.getBlackUsername());
+        values.setString(4, gameData.getGameName());
+        String json = new Gson().toJson(gameData.getGame());
+        values.setString(5, json);
     }
 
     @Override
