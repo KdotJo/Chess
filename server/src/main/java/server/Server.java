@@ -1,6 +1,7 @@
 package server;
 
 import dataaccess.DataAccessException;
+import dataaccess.MySqlDAO.MySqlAuthDAO;
 import dataaccess.MySqlDAO.MySqlGameDAO;
 import dataaccess.MySqlDAO.MySqlUserDAO;
 import dataaccess.interfaces.AuthDataAccess;
@@ -30,7 +31,7 @@ public class Server {
     public Server() {
         try {
             UserDataAccess UserDao = new MySqlUserDAO();
-            AuthDataAccess AuthDao = new MemoryAuthDAO();
+            AuthDataAccess AuthDao = new MySqlAuthDAO();
             GameDataAccess GameDao = new MySqlGameDAO();
             UserService userService = new UserService(UserDao, AuthDao);
             GameService gameService = new GameService(AuthDao, GameDao);
