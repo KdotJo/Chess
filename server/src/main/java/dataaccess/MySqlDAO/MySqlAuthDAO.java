@@ -7,6 +7,7 @@ import model.AuthData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -56,16 +57,43 @@ public class MySqlAuthDAO implements AuthDataAccess {
 
     @Override
     public AuthData getAuth(String authToken) throws DataAccessException {
+        var query = "SELECT * FROM authTokens WHERE authToken = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+            PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setString(1, authToken);
+            ResultSet results = preparedStatement.executeQuery();
+            if (results.next()) {
+                return new AuthData(
+                        results.getString("authToken"),
+                        results.getString("username")
+                );
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Failed to get authToken", e);
+        }
         return null;
     }
 
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
-
+        var query = "DELETE FROM authTokens WHERE authToken = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+            PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            preparedStatement.setString(1, authToken);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Failed to delete authToken");
+        }
     }
 
     @Override
     public void clear() throws DataAccessException {
-
+        var statement = "TRUNCATE TABLE users";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement queryStatement = conn.prepareStatement(statement)) {
+            queryStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Failed to clear table", e);
+        }
     }
 }
