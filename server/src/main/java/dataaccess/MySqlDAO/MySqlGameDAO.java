@@ -130,6 +130,12 @@ public class MySqlGameDAO implements GameDataAccess {
 
     @Override
     public void clear() throws DataAccessException {
-
+        var statement = "TRUNCATE TABLE users";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement queryStatement = conn.prepareStatement(statement)) {
+            queryStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Failed to clear table", e);
+        }
     }
 }
