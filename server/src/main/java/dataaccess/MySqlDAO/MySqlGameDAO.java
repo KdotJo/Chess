@@ -125,7 +125,7 @@ public class MySqlGameDAO implements GameDataAccess {
 
     @Override
     public void clear() throws DataAccessException {
-        var statement = "TRUNCATE TABLE users";
+        var statement = "TRUNCATE TABLE games";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement queryStatement = conn.prepareStatement(statement)) {
             queryStatement.executeUpdate();

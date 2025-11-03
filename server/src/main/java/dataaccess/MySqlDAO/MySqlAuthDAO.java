@@ -20,8 +20,8 @@ public class MySqlAuthDAO implements AuthDataAccess {
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS authTokens (
-            authToken varchar(256) NOT NULL AUTO_INCREMENT,
-            username varchar(256) DEFAULT NOT NULL,
+            authToken varchar(256) NOT NULL,
+            username varchar(256) NOT NULL,
             PRIMARY KEY (authToken)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
@@ -51,7 +51,7 @@ public class MySqlAuthDAO implements AuthDataAccess {
             preparedStatement.executeUpdate();
             return authToken;
         } catch (SQLException e) {
-            throw new DataAccessException("Failed to create authToken");
+            throw new DataAccessException("Failed to create authToken", e);
         }
     }
 
@@ -82,13 +82,13 @@ public class MySqlAuthDAO implements AuthDataAccess {
             preparedStatement.setString(1, authToken);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Failed to delete authToken");
+            throw new DataAccessException("Failed to delete authToken", e);
         }
     }
 
     @Override
     public void clear() throws DataAccessException {
-        var statement = "TRUNCATE TABLE users";
+        var statement = "TRUNCATE TABLE authTokens";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement queryStatement = conn.prepareStatement(statement)) {
             queryStatement.executeUpdate();
