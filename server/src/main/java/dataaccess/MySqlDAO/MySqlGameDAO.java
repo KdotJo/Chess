@@ -6,17 +6,12 @@ import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
 import dataaccess.interfaces.GameDataAccess;
 import model.GameData;
-import service.GameService;
-
-import javax.xml.crypto.Data;
-import javax.xml.transform.Result;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class MySqlGameDAO implements GameDataAccess {
 

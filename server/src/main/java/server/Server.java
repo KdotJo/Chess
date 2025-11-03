@@ -1,6 +1,7 @@
 package server;
 
 import dataaccess.DataAccessException;
+import dataaccess.MySqlDAO.MySqlGameDAO;
 import dataaccess.MySqlDAO.MySqlUserDAO;
 import dataaccess.interfaces.AuthDataAccess;
 import dataaccess.interfaces.GameDataAccess;
@@ -30,7 +31,7 @@ public class Server {
         try {
             UserDataAccess UserDao = new MySqlUserDAO();
             AuthDataAccess AuthDao = new MemoryAuthDAO();
-            GameDataAccess GameDao = new MemoryGameDAO();
+            GameDataAccess GameDao = new MySqlGameDAO();
             UserService userService = new UserService(UserDao, AuthDao);
             GameService gameService = new GameService(AuthDao, GameDao);
             this.registrationHandler = new RegistrationHandler(userService);

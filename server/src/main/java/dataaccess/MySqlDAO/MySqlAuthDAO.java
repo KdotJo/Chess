@@ -6,7 +6,9 @@ import dataaccess.interfaces.AuthDataAccess;
 import model.AuthData;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.UUID;
 
 public class MySqlAuthDAO implements AuthDataAccess {
 
@@ -36,9 +38,20 @@ public class MySqlAuthDAO implements AuthDataAccess {
             throw new DataAccessException("Unable to configure database", e);
         }
     }
+
     @Override
     public String createAuth(String username) throws DataAccessException {
-        return "";
+        var query = "INSERT INTO authTokens (authToken, username) VALUES (?, ?)";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+            String authToken = UUID.randomUUID().toString();
+            preparedStatement.setString(1, authToken);
+            preparedStatement.setString(2, username);
+            preparedStatement.executeUpdate();
+            return authToken;
+        } catch (SQLException e) {
+            throw new DataAccessException("Failed to create authToken");
+        }
     }
 
     @Override
