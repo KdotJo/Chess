@@ -19,9 +19,9 @@ public class UserService {
     private final AuthDataAccess authDao;
     private final UserDataAccess userDao;
 
-    public UserService (UserDataAccess UserDao, AuthDataAccess AuthDao) {
-        this.authDao = AuthDao;
-        this.userDao = UserDao;
+    public UserService (UserDataAccess userDao, AuthDataAccess authDao) {
+        this.authDao = authDao;
+        this.userDao = userDao;
     }
 
     public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {

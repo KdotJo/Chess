@@ -27,11 +27,11 @@ public class Server {
 
     public Server() {
         try {
-            UserDataAccess UserDao = new MySqlUserDao();
-            AuthDataAccess AuthDao = new MySqlAuthDao();
-            GameDataAccess GameDao = new MySqlGameDao();
-            UserService userService = new UserService(UserDao, AuthDao);
-            GameService gameService = new GameService(AuthDao, GameDao);
+            UserDataAccess userDao = new MySqlUserDao();
+            AuthDataAccess authDao = new MySqlAuthDao();
+            GameDataAccess gameDao = new MySqlGameDao();
+            UserService userService = new UserService(userDao, authDao);
+            GameService gameService = new GameService(authDao, gameDao);
             this.registrationHandler = new RegistrationHandler(userService);
             this.databaseHandler = new DatabaseHandler(gameService, userService);
             this.loginHandler = new LoginHandler(userService);

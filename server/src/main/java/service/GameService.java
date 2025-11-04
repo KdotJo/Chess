@@ -19,9 +19,9 @@ public class GameService {
     private final AuthDataAccess authDao;
     private final GameDataAccess gameDao;
 
-    public GameService(AuthDataAccess AuthDao, GameDataAccess GameDao) {
-        this.authDao = AuthDao;
-        this.gameDao = GameDao;
+    public GameService(AuthDataAccess authDao, GameDataAccess gameDao) {
+        this.authDao = authDao;
+        this.gameDao = gameDao;
     }
 
     public ListGamesResult list(String authToken) throws DataAccessException {
