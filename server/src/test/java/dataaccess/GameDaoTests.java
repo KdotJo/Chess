@@ -28,4 +28,9 @@ public class GameDaoTests {
     public void testFive() {
         Server server = new Server();
     }
+
+    @Test
+    public void testSix() {
+        Server server = new Server();
+    }
 }
