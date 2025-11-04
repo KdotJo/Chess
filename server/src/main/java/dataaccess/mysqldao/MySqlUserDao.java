@@ -1,4 +1,4 @@
-package dataaccess.MySqlDao;
+package dataaccess.mysqldao;
 import java.sql.*;
 
 import dataaccess.DatabaseManager;
