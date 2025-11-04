@@ -11,9 +11,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class MySqlAuthDAO implements AuthDataAccess {
+public class MySqlAuthDao implements AuthDataAccess {
 
-    public MySqlAuthDAO() throws DataAccessException {
+    public MySqlAuthDao() throws DataAccessException {
         configureDatabase();
     }
 

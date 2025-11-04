@@ -1,11 +1,6 @@
 package handlers;
 
 import dataaccess.DataAccessException;
-import dataaccess.interfaces.AuthDataAccess;
-import dataaccess.interfaces.GameDataAccess;
-import dataaccess.interfaces.UserDataAccess;
-import dataaccess.memoryDAO.MemoryAuthDAO;
-import dataaccess.memoryDAO.MemoryGameDAO;
 import io.javalin.http.Context;
 import service.GameService;
 import service.UserService;

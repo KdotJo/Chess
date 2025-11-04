@@ -1,15 +1,12 @@
 package server;
 
 import dataaccess.DataAccessException;
-import dataaccess.MySqlDAO.MySqlAuthDAO;
-import dataaccess.MySqlDAO.MySqlGameDAO;
-import dataaccess.MySqlDAO.MySqlUserDAO;
+import dataaccess.MySqlDAO.MySqlAuthDao;
+import dataaccess.MySqlDAO.MySqlGameDao;
+import dataaccess.MySqlDAO.MySqlUserDao;
 import dataaccess.interfaces.AuthDataAccess;
 import dataaccess.interfaces.GameDataAccess;
 import dataaccess.interfaces.UserDataAccess;
-import dataaccess.memoryDAO.MemoryAuthDAO;
-import dataaccess.memoryDAO.MemoryGameDAO;
-import dataaccess.memoryDAO.MemoryUserDAO;
 import handlers.*;
 import io.javalin.*;
 import io.javalin.json.JavalinGson;
@@ -30,9 +27,9 @@ public class Server {
 
     public Server() {
         try {
-            UserDataAccess UserDao = new MySqlUserDAO();
-            AuthDataAccess AuthDao = new MySqlAuthDAO();
-            GameDataAccess GameDao = new MySqlGameDAO();
+            UserDataAccess UserDao = new MySqlUserDao();
+            AuthDataAccess AuthDao = new MySqlAuthDao();
+            GameDataAccess GameDao = new MySqlGameDao();
             UserService userService = new UserService(UserDao, AuthDao);
             GameService gameService = new GameService(AuthDao, GameDao);
             this.registrationHandler = new RegistrationHandler(userService);

@@ -13,9 +13,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class MySqlGameDAO implements GameDataAccess {
+public class MySqlGameDao implements GameDataAccess {
 
-    public MySqlGameDAO () throws DataAccessException {
+    public MySqlGameDao() throws DataAccessException {
         configureDatabase();
     }
     private final String[] createStatements = {

@@ -7,7 +7,7 @@ import model.GameData;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class MemoryGameDAO implements GameDataAccess {
+public class MemoryGameDao implements GameDataAccess {
 
     HashMap<Integer, GameData> mockDB = new HashMap<>();
 

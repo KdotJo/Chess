@@ -8,9 +8,9 @@ import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
 
-public class MySqlUserDAO implements UserDataAccess {
+public class MySqlUserDao implements UserDataAccess {
 
-    public MySqlUserDAO() throws DataAccessException {
+    public MySqlUserDao() throws DataAccessException {
         configureDatabase();
     }
 
