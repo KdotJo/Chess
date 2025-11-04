@@ -1,8 +1,5 @@
-package service;
+package dataaccess;
 
-import dataaccess.DataAccessException;
-import dataaccess.mysql.MySqlUserDao;
-import model.UserData;
 import org.junit.jupiter.api.Test;
 import server.Server;
 
@@ -17,6 +14,21 @@ public class AuthDaoTests {
 
     @Test
     public void testFailedCreateGame() {
+        Server server = new Server();
+    }
+
+    @Test
+    public void testThree() {
+        Server server = new Server();
+    }
+
+    @Test
+    public void testFour() {
+        Server server = new Server();
+    }
+
+    @Test
+    public void testFive() {
         Server server = new Server();
     }
 }
