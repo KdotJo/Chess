@@ -9,6 +9,7 @@ import dataaccess.memoryDAO.MemoryGameDAO;
 import model.GameData;
 import request.CreateGameRequest;
 import request.JoinGameRequest;
+import result.ClearResult;
 import result.CreateGameResult;
 import result.JoinGameResult;
 import result.ListGamesResult;
@@ -27,7 +28,7 @@ public class GameService {
 
     public ListGamesResult list(String authToken) throws DataAccessException {
         if (AuthDao.getAuth(authToken) == null) {
-            throw new DataAccessException("Error: Unauthorized");
+            throw new DataAccessException("Error: Missing authToken");
         }
         Collection<GameData> games = GameDao.listGames();
         return new ListGamesResult(games);
@@ -35,7 +36,7 @@ public class GameService {
 
     public CreateGameResult create(String authToken, CreateGameRequest createGameRequest) throws DataAccessException {
         if (AuthDao.getAuth(authToken) == null) {
-            throw new DataAccessException("Error: Unauthorized");
+            throw new DataAccessException("Error: Missing authToken");
         }
         int gameId = Math.abs(UUID.randomUUID().hashCode());
         ChessGame newGame = new ChessGame();
@@ -47,7 +48,7 @@ public class GameService {
     public JoinGameResult join(String authToken, JoinGameRequest joinGameRequest) throws DataAccessException {
 
         if (AuthDao.getAuth(authToken) == null) {
-            throw new DataAccessException("Error: Unauthorized");
+            throw new DataAccessException("Error: Missing authToken");
         }
         GameData getGame = GameDao.getGame(joinGameRequest.gameID());
         String teamColor = joinGameRequest.playerColor();
@@ -68,5 +69,14 @@ public class GameService {
             GameDao.updateGame(getGame.getGameID(), getGame.getWhiteUsername(), username);
         }
         return new JoinGameResult();
+    }
+    public ClearResult clear() throws DataAccessException {
+        try {
+            GameDao.clear();
+            AuthDao.clear();
+            return new ClearResult();
+        } catch (DataAccessException e) {
+            throw new DataAccessException("Error: Clear Failed");
+        }
     }
 }

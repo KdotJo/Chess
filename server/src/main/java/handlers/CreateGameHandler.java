@@ -29,7 +29,11 @@ public class CreateGameHandler {
             CreateGameResult result = gameService.create(authToken, request);
             ctx.status(200).json(result);
         } catch (DataAccessException e) {
-            ctx.status(401).json(Map.of("message", e.getMessage()));
+            if ("failed to get connection".equals(e.getMessage())) {
+                ctx.status(500).json(Map.of("message", e.getMessage()));
+            } else {
+                ctx.status(401).json(Map.of("message", e.getMessage()));
+            }
         }
     }
 }

@@ -36,7 +36,7 @@ public class Server {
             UserService userService = new UserService(UserDao, AuthDao);
             GameService gameService = new GameService(AuthDao, GameDao);
             this.registrationHandler = new RegistrationHandler(userService);
-            this.databaseHandler = new DatabaseHandler(UserDao, GameDao, AuthDao);
+            this.databaseHandler = new DatabaseHandler(gameService, userService);
             this.loginHandler = new LoginHandler(userService);
             this.logoutHandler = new LogoutHandler(userService);
             this.createGameHandler = new CreateGameHandler(gameService);

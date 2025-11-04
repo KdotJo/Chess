@@ -8,6 +8,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import request.LoginRequest;
 import request.LogoutRequest;
 import request.RegisterRequest;
+import result.ClearResult;
 import result.LoginResult;
 import result.LogoutResult;
 import result.RegisterResult;
@@ -60,5 +61,14 @@ public class UserService {
         }
         AuthDao.deleteAuth(logoutRequest.authToken());
         return new LogoutResult();
+    }
+
+    public ClearResult clear() throws DataAccessException {
+        try {
+            UserDao.clear();
+            return new ClearResult();
+        } catch (DataAccessException e) {
+            throw new DataAccessException("Error: Clear Failed");
+        }
     }
 }

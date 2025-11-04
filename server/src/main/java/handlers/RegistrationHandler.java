@@ -6,6 +6,7 @@ import request.RegisterRequest;
 import result.RegisterResult;
 import service.UserService;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 public class RegistrationHandler {
@@ -25,7 +26,11 @@ public class RegistrationHandler {
             RegisterResult result = userService.register(req);
             ctx.status(200).json(result);
         } catch (DataAccessException e) {
-            ctx.status(403).json(Map.of("message", e.getMessage()));
+            if ("failed to get connection".equals(e.getMessage())) {
+                ctx.status(500).json(Map.of("message", e.getMessage()));
+            } else {
+                ctx.status(403).json(Map.of("message", e.getMessage()));
+            }
         }
     }
 }
