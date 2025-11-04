@@ -27,7 +27,7 @@ public class DatabaseHandler {
             userService.clear();
             ctx.status(200).json(Map.of());
         } catch (DataAccessException e) {
-            ctx.status(500).json(Map.of("message", e.getMessage()));
+            ctx.status(500).json(Map.of("message", e.getMessage().contains("Error") ? e.getMessage() : "Error: " + e.getMessage()));
         }
     }
 }

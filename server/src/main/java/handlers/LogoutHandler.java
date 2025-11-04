@@ -27,9 +27,9 @@ public class LogoutHandler {
             ctx.status(200).json(result);
         } catch (DataAccessException e) {
             if ("failed to get connection".equals(e.getMessage())) {
-                ctx.status(500).json(Map.of("message", e.getMessage()));
+                ctx.status(500).json(Map.of("message", e.getMessage().contains("Error") ? e.getMessage() : "Error: " + e.getMessage()));
             } else {
-                ctx.status(401).json(Map.of("message", e.getMessage()));
+                ctx.status(401).json(Map.of("message", e.getMessage().contains("Error") ? e.getMessage() : "Error: " + e.getMessage()));
             }
         }
     }

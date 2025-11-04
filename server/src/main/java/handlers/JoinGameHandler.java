@@ -39,13 +39,13 @@ public class JoinGameHandler {
             ctx.status(200).json(Map.of());
         } catch (DataAccessException e) {
             if ("failed to get connection".equals(e.getMessage())) {
-                ctx.status(500).json(Map.of("message", e.getMessage()));
+                ctx.status(500).json(Map.of("message", e.getMessage().contains("Error") ? e.getMessage() : "Error: " + e.getMessage()));
             } else if (e.getMessage().contains("Team Already Taken")) {
-                ctx.status(403).json(Map.of("message", e.getMessage()));
+                ctx.status(403).json(Map.of("message", e.getMessage().contains("Error") ? e.getMessage() : "Error: " + e.getMessage()));
             } else if (e.getMessage().contains("Unauthorized")) {
-                ctx.status(401).json(Map.of("message", e.getMessage()));
+                ctx.status(401).json(Map.of("message", e.getMessage().contains("Error") ? e.getMessage() : "Error: " + e.getMessage()));
             } else {
-                ctx.status(401).json(Map.of("message", e.getMessage()));
+                ctx.status(401).json(Map.of("message", e.getMessage().contains("Error") ? e.getMessage() : "Error: " + e.getMessage()));
             }
         }
     }
