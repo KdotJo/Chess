@@ -16,41 +16,41 @@ import java.util.Collection;
 import java.util.UUID;
 
 public class GameService {
-    private final AuthDataAccess AuthDao;
-    private final GameDataAccess GameDao;
+    private final AuthDataAccess authDao;
+    private final GameDataAccess gameDao;
 
     public GameService(AuthDataAccess AuthDao, GameDataAccess GameDao) {
-        this.AuthDao = AuthDao;
-        this.GameDao = GameDao;
+        this.authDao = AuthDao;
+        this.gameDao = GameDao;
     }
 
     public ListGamesResult list(String authToken) throws DataAccessException {
-        if (AuthDao.getAuth(authToken) == null) {
+        if (authDao.getAuth(authToken) == null) {
             throw new DataAccessException("Error: Missing authToken");
         }
-        Collection<GameData> games = GameDao.listGames();
+        Collection<GameData> games = gameDao.listGames();
         return new ListGamesResult(games);
     }
 
     public CreateGameResult create(String authToken, CreateGameRequest createGameRequest) throws DataAccessException {
-        if (AuthDao.getAuth(authToken) == null) {
+        if (authDao.getAuth(authToken) == null) {
             throw new DataAccessException("Error: Missing authToken");
         }
         int gameId = Math.abs(UUID.randomUUID().hashCode());
         ChessGame newGame = new ChessGame();
         GameData gameData = new GameData(gameId, null, null, createGameRequest.gameName(), newGame);
-        GameDao.createGame(gameData);
+        gameDao.createGame(gameData);
         return new CreateGameResult(gameId);
     }
 
     public JoinGameResult join(String authToken, JoinGameRequest joinGameRequest) throws DataAccessException {
 
-        if (AuthDao.getAuth(authToken) == null) {
+        if (authDao.getAuth(authToken) == null) {
             throw new DataAccessException("Error: Missing authToken");
         }
-        GameData getGame = GameDao.getGame(joinGameRequest.gameID());
+        GameData getGame = gameDao.getGame(joinGameRequest.gameID());
         String teamColor = joinGameRequest.playerColor();
-        String username = AuthDao.getAuth(authToken).getUsername();
+        String username = authDao.getAuth(authToken).getUsername();
         if (getGame == null) {
             throw new DataAccessException("Error: Can't Get Game");
         }
@@ -58,20 +58,20 @@ public class GameService {
             if (getGame.getWhiteUsername() != null && !getGame.getWhiteUsername().equals(username)) {
                 throw new DataAccessException("Error: White Team Already Taken");
             }
-            GameDao.updateGame(getGame.getGameID(), username, getGame.getBlackUsername());
+            gameDao.updateGame(getGame.getGameID(), username, getGame.getBlackUsername());
         }
         if (teamColor.equals("BLACK")) {
             if (getGame.getBlackUsername() != null && !getGame.getBlackUsername().equals(username)) {
                 throw new DataAccessException("Error: Black Team Already Taken");
             }
-            GameDao.updateGame(getGame.getGameID(), getGame.getWhiteUsername(), username);
+            gameDao.updateGame(getGame.getGameID(), getGame.getWhiteUsername(), username);
         }
         return new JoinGameResult();
     }
     public ClearResult clear() throws DataAccessException {
         try {
-            GameDao.clear();
-            AuthDao.clear();
+            gameDao.clear();
+            authDao.clear();
             return new ClearResult();
         } catch (DataAccessException e) {
             throw new DataAccessException("Error: Clear Failed");

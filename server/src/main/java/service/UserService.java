@@ -16,12 +16,12 @@ import result.RegisterResult;
 
 public class UserService {
 
-    private final AuthDataAccess AuthDao;
-    private final UserDataAccess UserDao;
+    private final AuthDataAccess authDao;
+    private final UserDataAccess userDao;
 
     public UserService (UserDataAccess UserDao, AuthDataAccess AuthDao) {
-        this.AuthDao = AuthDao;
-        this.UserDao = UserDao;
+        this.authDao = AuthDao;
+        this.userDao = UserDao;
     }
 
     public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
@@ -33,20 +33,20 @@ public class UserService {
         // 5. Generate auth token (use AuthDAO)
         // 6. Return RegisterResult with username and authToken
 
-        if (UserDao.getUser(registerRequest.username()) != null) {
+        if (userDao.getUser(registerRequest.username()) != null) {
             throw new DataAccessException("Error: Username already taken");
         }
         UserData newUser = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
-        UserDao.createUser(newUser);
-        String authToken = AuthDao.createAuth(registerRequest.username());
+        userDao.createUser(newUser);
+        String authToken = authDao.createAuth(registerRequest.username());
         return new RegisterResult(registerRequest.username(), authToken);
     }
 
     public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
-        if (UserDao.getUser(loginRequest.username()) != null) {
-            UserData user = UserDao.getUser(loginRequest.username());
+        if (userDao.getUser(loginRequest.username()) != null) {
+            UserData user = userDao.getUser(loginRequest.username());
             if (BCrypt.checkpw(loginRequest.password(), user.getPassword())) {
-                String authToken = AuthDao.createAuth(loginRequest.username());
+                String authToken = authDao.createAuth(loginRequest.username());
                 return new LoginResult(loginRequest.username(), authToken);
             }
             throw new DataAccessException("Error: Missing Password");
@@ -56,16 +56,16 @@ public class UserService {
     }
 
     public LogoutResult logout(LogoutRequest logoutRequest) throws DataAccessException{
-        if (AuthDao.getAuth(logoutRequest.authToken()) == null) {
+        if (authDao.getAuth(logoutRequest.authToken()) == null) {
             throw new DataAccessException("Error: No authToken");
         }
-        AuthDao.deleteAuth(logoutRequest.authToken());
+        authDao.deleteAuth(logoutRequest.authToken());
         return new LogoutResult();
     }
 
     public ClearResult clear() throws DataAccessException {
         try {
-            UserDao.clear();
+            userDao.clear();
             return new ClearResult();
         } catch (DataAccessException e) {
             throw new DataAccessException("Error: Clear Failed");
