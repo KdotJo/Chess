@@ -1,9 +1,9 @@
 package server;
 
 import dataaccess.DataAccessException;
-import dataaccess.mysqldao.MySqlAuthDao;
-import dataaccess.mysqldao.MySqlGameDao;
-import dataaccess.mysqldao.MySqlUserDao;
+import dataaccess.mysql.MySqlAuthDao;
+import dataaccess.mysql.MySqlGameDao;
+import dataaccess.mysql.MySqlUserDao;
 import dataaccess.interfaces.AuthDataAccess;
 import dataaccess.interfaces.GameDataAccess;
 import dataaccess.interfaces.UserDataAccess;
