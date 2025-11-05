@@ -9,11 +9,9 @@ import org.mindrot.jbcrypt.BCrypt;
 
 
 public class MySqlUserDao implements UserDataAccess {
-
     public MySqlUserDao() throws DataAccessException {
         configureDatabase();
     }
-
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS users (

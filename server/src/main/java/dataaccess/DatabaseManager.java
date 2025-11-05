@@ -2,6 +2,7 @@ package dataaccess;
 
 import java.sql.*;
 import java.util.Properties;
+import java.util.stream.StreamSupport;
 
 public class DatabaseManager {
     private static String databaseName;
@@ -52,8 +53,11 @@ public class DatabaseManager {
         }
     }
 
+
     private static void loadPropertiesFromResources() {
-        try (var propStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("db.properties")) {
+        try (var propStream = Thread.currentThread()
+                .getContextClassLoader()
+                .getResourceAsStream("db.properties")) {
             if (propStream == null) {
                 throw new Exception("Unable to load db.properties");
             }
