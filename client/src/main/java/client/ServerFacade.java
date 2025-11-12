@@ -76,10 +76,7 @@ public class ServerFacade {
 
     public LoginResult login(String username, String password) throws ServerFacadeException {
         LoginRequest loginRequest = new LoginRequest(username, password);
-        HttpRequest httpRequest = buildRequest("POST", "/session", loginRequest);
-        HttpResponse<String> response = response(httpRequest);
-        Gson gson = new Gson();
-        return gson.fromJson(response.body(), LoginResult.class);
+        return facadeMethod(loginRequest, LoginResult.class);
 
         /* working codes
         LoginRequest loginRequest = new LoginRequest(username, password);
