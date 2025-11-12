@@ -52,6 +52,7 @@ public class ChessClient {
                     if (result.authToken() != null) {
                         System.out.println("Register Successful! Welcome " + result.username());
                         state = State.SIGNEDIN;
+                        System.out.println("\n" + help());
                     } else {
                         System.out.println("Registration Failed: Internal Server Failure");
                     }
@@ -69,6 +70,7 @@ public class ChessClient {
                     if (result.authToken() != null) {
                         System.out.println("Login Successful! Welcome " + result.username());
                         state = State.SIGNEDIN;
+                        System.out.println("\n" + help());
                     } else {
                         System.out.println("Login Failed: Internal Server Failure");
                     }
