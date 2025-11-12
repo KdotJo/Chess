@@ -3,6 +3,7 @@ package client;
 import java.util.Scanner;
 import client.ServerFacade;
 import exceptions.ServerFacadeException;
+import request.LoginRequest;
 import result.LoginResult;
 import result.RegisterResult;
 
@@ -49,6 +50,11 @@ public class ChessClient {
                 try {
                     RegisterResult result = serverFacade.register(inputs[1], inputs[2], inputs[3]);
                     System.out.println("Register Result: " + result);
+                    if (result.authToken() != null) {
+                        state = State.SIGNEDIN;
+                    } else {
+                        System.out.println("Registration Failed: Internal Server Failure");
+                    }
                 } catch (ServerFacadeException e) {
                     System.out.println("Registration Failed: " + e.getMessage());
                 }
@@ -61,6 +67,11 @@ public class ChessClient {
                 try {
                     LoginResult result = serverFacade.login(inputs[1], inputs[2]);
                     System.out.println("Login Result: " + result);
+                    if (result.authToken() != null) {
+                        state = State.SIGNEDIN;
+                    } else {
+                        System.out.println("Login Failed: Internal Server Failure");
+                    }
                 } catch (ServerFacadeException e) {
                     System.out.println("Login Failed: " + e.getMessage());
                 }
