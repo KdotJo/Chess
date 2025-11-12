@@ -50,7 +50,8 @@ public class ChessClient {
                 try {
                     RegisterResult result = serverFacade.register(inputs[1], inputs[2], inputs[3]);
                     if (result.authToken() != null) {
-                        System.out.println("Register Successful! Welcome " + result.username());
+                        System.out.println(SET_TEXT_ITALIC + SET_TEXT_COLOR_MAGENTA +
+                                "Registration Successful! Welcome " + result.username());
                         state = State.SIGNEDIN;
                         System.out.println("\n" + help());
                     } else {
@@ -68,7 +69,8 @@ public class ChessClient {
                 try {
                     LoginResult result = serverFacade.login(inputs[1], inputs[2]);
                     if (result.authToken() != null) {
-                        System.out.println("Login Successful! Welcome " + result.username());
+                        System.out.println(SET_TEXT_ITALIC + SET_TEXT_COLOR_MAGENTA +
+                                "Login Successful! Welcome " + result.username());
                         state = State.SIGNEDIN;
                         System.out.println("\n" + help());
                     } else {
