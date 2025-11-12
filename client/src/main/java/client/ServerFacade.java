@@ -2,14 +2,17 @@ package client;
 
 import com.google.gson.Gson;
 import exceptions.ServerFacadeException;
+import request.CreateGameRequest;
 import request.LoginRequest;
 import request.LogoutRequest;
 import request.RegisterRequest;
 
+import result.CreateGameResult;
 import result.LoginResult;
 import result.LogoutResult;
 import result.RegisterResult;
 import java.net.URI;
+import dataaccess.interfaces.HttpFacadeRequest;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -55,16 +58,20 @@ public class ServerFacade {
         }
     }
 
+    public <Http extends HttpFacadeRequest, Obj> Obj facadeMethod(Http request, Class<Obj> result) throws ServerFacadeException{
+        HttpRequest httpRequest = buildRequest(request.getMethodName(), request.getPathName(), request);
+        HttpResponse<String> response = response(httpRequest);
+        Gson gson = new Gson();
+        return gson.fromJson(response.body(), result);
+    }
+
     public ServerFacade(String url) {
         serverUrl = url;
     }
 
     public RegisterResult register(String username, String password, String email) throws ServerFacadeException {
         RegisterRequest registerRequest = new RegisterRequest(username, password, email);
-        HttpRequest httpRequest = buildRequest("POST", "/user", registerRequest);
-        HttpResponse<String> response = response(httpRequest);
-        Gson gson = new Gson();
-        return gson.fromJson(response.body(), RegisterResult.class);
+        return facadeMethod(registerRequest, RegisterResult.class);
     }
 
     public LoginResult login(String username, String password) throws ServerFacadeException {
@@ -73,8 +80,17 @@ public class ServerFacade {
         HttpResponse<String> response = response(httpRequest);
         Gson gson = new Gson();
         return gson.fromJson(response.body(), LoginResult.class);
+
+        /* working codes
+        LoginRequest loginRequest = new LoginRequest(username, password);
+        HttpRequest httpRequest = buildRequest("POST", "/session", loginRequest);
+        HttpResponse<String> response = response(httpRequest);
+        Gson gson = new Gson();
+        return gson.fromJson(response.body(), LoginResult.class);
+        */
     }
 
+/*
     public LogoutResult logout(String authToken) throws ServerFacadeException {
         LogoutRequest logoutRequest = new LogoutRequest(authToken);
         HttpRequest httpRequest = buildRequest("DELETE", "/session", logoutRequest);
@@ -82,4 +98,12 @@ public class ServerFacade {
         Gson gson = new Gson();
         return gson.fromJson(response.body(), LogoutResult.class);
     }
+    public CreateGameResult create(String authToken, String gameName) throws ServerFacadeException {
+        CreateGameRequest createGameRequest = new CreateGameRequest(authToken, gameName);
+        HttpResponse<String> response = response(httpRequest);
+        Gson gson = new Gson();
+        return gson.fromJson(response.body(), CreateGameResult.class);
+    }
+*/
+
 }

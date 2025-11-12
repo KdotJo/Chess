@@ -85,9 +85,7 @@ public class ChessClient {
                 System.out.print(help());
                 break;
             case "quit":
-                if (!state.equals(State.SIGNEDIN)) {
-                    return "quit";
-                }
+                return "quit";
             default:
                 System.out.print("Unknown Command: Type 'help' for a list of commands");
                 break;
