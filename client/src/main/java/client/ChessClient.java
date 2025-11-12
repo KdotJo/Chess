@@ -44,7 +44,7 @@ public class ChessClient {
         switch (lower) {
             case "register":
                 if (inputs.length < 4) {
-                    System.out.println("Please Enter Fields: register <USERNAME> <PASSWORD> <EMAIL>");
+                    System.out.print("Please Enter Fields: register <USERNAME> <PASSWORD> <EMAIL>");
                     return "";
                 }
                 try {
@@ -54,17 +54,17 @@ public class ChessClient {
                                 "Registration Successful! Welcome " + result.username() +
                                 RESET_TEXT_ITALIC + RESET_TEXT_COLOR);
                         state = State.SIGNEDIN;
-                        System.out.println(help());
+                        System.out.print(help());
                     } else {
-                        System.out.println("Registration Failed: Internal Server Failure");
+                        System.out.print("Registration Failed: Internal Server Failure");
                     }
                 } catch (ServerFacadeException e) {
-                    System.out.println("Registration Failed: " + e.getMessage());
+                    System.out.print("Registration Failed: " + e.getMessage());
                 }
                 break;
             case "login":
                 if (inputs.length < 3) {
-                    System.out.println("Please Enter Fields: login <USERNAME> <PASSWORD>");
+                    System.out.print("Please Enter Fields: login <USERNAME> <PASSWORD>");
                     return "";
                 }
                 try {
@@ -74,25 +74,23 @@ public class ChessClient {
                                 "Login Successful! Welcome " + result.username() +
                                 RESET_TEXT_ITALIC + RESET_TEXT_COLOR);
                         state = State.SIGNEDIN;
-                        System.out.println(help());
+                        System.out.print(help());
                     } else {
-                        System.out.println("Login Failed: Internal Server Failure");
+                        System.out.print("Login Failed: Internal Server Failure");
                     }
                 } catch (ServerFacadeException e) {
-                    System.out.println("Login Failed: " + e.getMessage());
+                    System.out.print("Login Failed: " + e.getMessage());
                 }
                 break;
             case "help":
-                System.out.println(help());
+                System.out.print(help());
                 break;
             case "quit":
                 if (!state.equals(State.SIGNEDIN)) {
                     return "quit";
-                } else {
-                    break;
                 }
             default:
-                System.out.println("Unknown Command: Type 'help' for a list of commands");
+                System.out.print("Unknown Command: Type 'help' for a list of commands");
                 break;
         }
         return "";
