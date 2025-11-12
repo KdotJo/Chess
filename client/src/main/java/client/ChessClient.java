@@ -91,8 +91,9 @@ public class ChessClient {
     private void printPrompt() {
         if (state.equals(State.SIGNEDIN)) {
             System.out.print("\n" + SET_TEXT_COLOR_MAGENTA + "[LOGGED IN]" + ">>> " + RESET_TEXT_COLOR);
+        } else {
+            System.out.print("\n" + SET_TEXT_COLOR_MAGENTA + ">>> " + RESET_TEXT_COLOR);
         }
-        System.out.print("\n" + SET_TEXT_COLOR_MAGENTA + ">>> " + RESET_TEXT_COLOR);
     }
 
     public void run() {
