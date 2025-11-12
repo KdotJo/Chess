@@ -51,9 +51,10 @@ public class ChessClient {
                     RegisterResult result = serverFacade.register(inputs[1], inputs[2], inputs[3]);
                     if (result.authToken() != null) {
                         System.out.println(SET_TEXT_ITALIC + SET_TEXT_COLOR_MAGENTA +
-                                "Registration Successful! Welcome " + result.username());
+                                "Registration Successful! Welcome " + result.username() +
+                                RESET_TEXT_ITALIC + RESET_TEXT_COLOR);
                         state = State.SIGNEDIN;
-                        System.out.println("\n" + help());
+                        System.out.println(help());
                     } else {
                         System.out.println("Registration Failed: Internal Server Failure");
                     }
@@ -70,9 +71,10 @@ public class ChessClient {
                     LoginResult result = serverFacade.login(inputs[1], inputs[2]);
                     if (result.authToken() != null) {
                         System.out.println(SET_TEXT_ITALIC + SET_TEXT_COLOR_MAGENTA +
-                                "Login Successful! Welcome " + result.username());
+                                "Login Successful! Welcome " + result.username() +
+                                RESET_TEXT_ITALIC + RESET_TEXT_COLOR);
                         state = State.SIGNEDIN;
-                        System.out.println("\n" + help());
+                        System.out.println(help());
                     } else {
                         System.out.println("Login Failed: Internal Server Failure");
                     }
@@ -84,7 +86,11 @@ public class ChessClient {
                 System.out.println(help());
                 break;
             case "quit":
-                return "quit";
+                if (!state.equals(State.SIGNEDIN)) {
+                    return "quit";
+                } else {
+                    break;
+                }
             default:
                 System.out.println("Unknown Command: Type 'help' for a list of commands");
                 break;
