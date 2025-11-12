@@ -1,9 +1,8 @@
 package client;
 
 import java.util.Scanner;
-import client.ServerFacade;
+
 import exceptions.ServerFacadeException;
-import request.LoginRequest;
 import result.LoginResult;
 import result.RegisterResult;
 
@@ -37,18 +36,18 @@ public class ChessClient {
                 """;
     }
 
-    private String handleInput(String input) {
-        String[] inputs = input.split("\\s+");
-        if (inputs.length == 0 || inputs[0].isEmpty()) {return "";}
-        String lower = inputs[0].toLowerCase();
+    private String loggedOut(String input) {
+        String[] commands = input.split("\\s+");
+        if (commands.length == 0 || commands[0].isEmpty()) {return "";}
+        String lower = commands[0].toLowerCase();
         switch (lower) {
             case "register":
-                if (inputs.length < 4) {
+                if (commands.length < 4) {
                     System.out.print("Please Enter Fields: register <USERNAME> <PASSWORD> <EMAIL>");
                     return "";
                 }
                 try {
-                    RegisterResult result = serverFacade.register(inputs[1], inputs[2], inputs[3]);
+                    RegisterResult result = serverFacade.register(commands[1], commands[2], commands[3]);
                     if (result.authToken() != null) {
                         System.out.println(SET_TEXT_ITALIC + SET_TEXT_COLOR_MAGENTA +
                                 "Registration Successful! Welcome " + result.username() +
@@ -63,12 +62,12 @@ public class ChessClient {
                 }
                 break;
             case "login":
-                if (inputs.length < 3) {
+                if (commands.length < 3) {
                     System.out.print("Please Enter Fields: login <USERNAME> <PASSWORD>");
                     return "";
                 }
                 try {
-                    LoginResult result = serverFacade.login(inputs[1], inputs[2]);
+                    LoginResult result = serverFacade.login(commands[1], commands[2]);
                     if (result.authToken() != null) {
                         System.out.println(SET_TEXT_ITALIC + SET_TEXT_COLOR_MAGENTA +
                                 "Login Successful! Welcome " + result.username() +
@@ -96,6 +95,21 @@ public class ChessClient {
         return "";
     }
 
+    private String loggedIn(String input) {
+        String[] commands = input.split("\\s+");
+        if (commands.length == 0 || commands[0].isEmpty()) {return "";}
+        String lower = commands[0].toLowerCase();
+        switch(lower) {
+            case "create":
+                if (commands.length < 2) {
+                    System.out.print("Please Enter Fields: create <NAME>");
+                    return "";
+                }
+
+        }
+        return "";
+    }
+
     private void printPrompt() {
         if (state.equals(State.SIGNEDIN)) {
             System.out.print("\n" + SET_TEXT_COLOR_MAGENTA + "[LOGGED IN] " + ">>> " + RESET_TEXT_COLOR);
@@ -112,7 +126,11 @@ public class ChessClient {
         while (!result.equals("quit")) {
             printPrompt();
             String input = scan.nextLine();
-            result = handleInput(input);
+            if (state.equals(State.SIGNEDIN)) {
+                result = loggedIn(input);
+            } else {
+                result = loggedOut(input);
+            }
         }
         System.out.println("Goodbye!");
 
