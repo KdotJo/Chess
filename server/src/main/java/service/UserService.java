@@ -51,7 +51,7 @@ public class UserService {
             }
             throw new DataAccessException("Error: Missing Password");
         }
-        throw new DataAccessException("Error: Bad Request");
+        throw new DataAccessException("Error: Bad Request: Likely Unregistered User");
 
     }
 

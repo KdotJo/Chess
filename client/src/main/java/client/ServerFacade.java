@@ -30,6 +30,7 @@ public class ServerFacade {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
                 .method(method, makeBody(body));
+        System.out.println("Attempting request to: " + serverUrl + path);
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
         }
@@ -48,6 +49,8 @@ public class ServerFacade {
             }
             return http;
         } catch (Exception e) {
+            System.out.println("Exception class: " + e.getClass());
+            System.out.println("Exception message: " + e.getMessage());
             throw new ServerFacadeException("HTTP has failed to communicate", e);
         }
     }
