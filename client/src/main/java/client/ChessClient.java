@@ -120,7 +120,18 @@ public class ChessClient {
                 break;
             case "list":
                 try {
-                    serverFacade.list();
+                    ListGamesResult result = serverFacade.list();
+                    if (result == null) {
+                        System.out.print("No games are currently created... Please create a game!!!");
+                    } else {
+                        System.out.print(SET_TEXT_ITALIC + SET_TEXT_COLOR_MAGENTA +
+                                "Current Games \n" + "Game Id | White Player | Black Player | Game Name \n" +
+                                RESET_TEXT_ITALIC + RESET_TEXT_COLOR);
+                        for (var game : result.games()) {
+                            System.out.print("* " + game.getGameID() + " " + game.getWhiteUsername() + " " +
+                                    game.getBlackUsername() + " " + game.getGameName());
+                        }
+                    }
                 } catch (ServerFacadeException e) {
                     System.out.print("Failed to list games: " + e.getMessage());
                 }
