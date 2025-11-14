@@ -5,6 +5,7 @@ import java.util.Scanner;
 import exceptions.ServerFacadeException;
 import result.CreateGameResult;
 import result.LoginResult;
+import result.LogoutResult;
 import result.RegisterResult;
 
 import static ui.EscapeSequences.*;
@@ -108,9 +109,8 @@ public class ChessClient {
                     return "";
                 }
                 try {
-
-                    CreateGameResult result = serverFacade.create(authToken, commands[1]);
-                    if (result.gameID() != 0 ) {
+                    CreateGameResult result = serverFacade.create(commands[1]);
+                    if (result.gameID() != 0) {
                         System.out.print(SET_TEXT_ITALIC + SET_TEXT_COLOR_MAGENTA +
                                 "Creation Successful! Your game is " + result.gameID() +
                                 RESET_TEXT_ITALIC + RESET_TEXT_COLOR);
@@ -121,6 +121,13 @@ public class ChessClient {
                     System.out.print("Failed to create game: " + e.getMessage());
                 }
 
+            case "logout":
+                try {
+                    serverFacade.logout();
+                    return "quit";
+                } catch (ServerFacadeException e) {
+                    System.out.print("Failed to logout " + e.getMessage());
+                }
         }
         return "";
     }

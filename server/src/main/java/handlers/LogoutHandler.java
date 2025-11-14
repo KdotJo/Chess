@@ -17,10 +17,13 @@ public class LogoutHandler {
 
     public void handleLogout (Context ctx) throws DataAccessException {
         try {
-            String authToken = ctx.header("authorization");
+            String authToken = ctx.header("Authorization");
             if (authToken == null || authToken.isEmpty()) {
                 ctx.status(401).json(Map.of("message", "Error: Unauthorized"));
                 return;
+            }
+            if (authToken.startsWith("Bearer ")) {
+                authToken = authToken.substring("Bearer ".length());
             }
             LogoutRequest req = new LogoutRequest(authToken);
             LogoutResult result = userService.logout(req);

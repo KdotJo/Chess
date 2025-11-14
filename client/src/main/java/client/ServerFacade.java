@@ -34,7 +34,6 @@ public class ServerFacade {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
                 .method(method, makeBody(body));
-        System.out.println("Attempting request to: " + serverUrl + path);
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
         }
@@ -89,14 +88,13 @@ public class ServerFacade {
         return result;
     }
 
-//    public LogoutResult logout(String authToken) throws ServerFacadeException {
-//        LogoutRequest logoutRequest = new LogoutRequest(authToken);
-//        return facadeMethod(logoutRequest, LogoutResult.class);
-//    }
+    public LogoutResult logout() throws ServerFacadeException {
+        LogoutRequest logoutRequest = new LogoutRequest(authToken);
+        return facadeMethod(logoutRequest, LogoutResult.class);
+    }
 
-    public CreateGameResult create(String authToken, String gameName) throws ServerFacadeException {
-        CreateGameRequest createGameRequest = new CreateGameRequest(gameName);
-        this.authToken = authToken;
+    public CreateGameResult create(String gameName) throws ServerFacadeException {
+        CreateGameRequest createGameRequest = new CreateGameRequest(authToken, gameName);
         return facadeMethod(createGameRequest, CreateGameResult.class);
     }
 }
