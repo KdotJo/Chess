@@ -3,6 +3,7 @@ package client;
 import java.util.Scanner;
 
 import exceptions.ServerFacadeException;
+import result.CreateGameResult;
 import result.LoginResult;
 import result.RegisterResult;
 
@@ -11,6 +12,7 @@ import static ui.EscapeSequences.*;
 public class ChessClient {
     private final ServerFacade serverFacade;
     private State state = State.SIGNEDOUT;
+    private String authToken;
 
     public ChessClient(String serverUrl) throws ServerFacadeException {
         serverFacade = new ServerFacade(serverUrl);
@@ -48,6 +50,7 @@ public class ChessClient {
                 }
                 try {
                     RegisterResult result = serverFacade.register(commands[1], commands[2], commands[3]);
+                    this.authToken = result.authToken();
                     if (result.authToken() != null) {
                         System.out.println(SET_TEXT_ITALIC + SET_TEXT_COLOR_MAGENTA +
                                 "Registration Successful! Welcome " + result.username() +
@@ -68,6 +71,7 @@ public class ChessClient {
                 }
                 try {
                     LoginResult result = serverFacade.login(commands[1], commands[2]);
+                    this.authToken = result.authToken();
                     if (result.authToken() != null) {
                         System.out.println(SET_TEXT_ITALIC + SET_TEXT_COLOR_MAGENTA +
                                 "Login Successful! Welcome " + result.username() +
@@ -102,6 +106,19 @@ public class ChessClient {
                 if (commands.length < 2) {
                     System.out.print("Please Enter Fields: create <NAME>");
                     return "";
+                }
+                try {
+
+                    CreateGameResult result = serverFacade.create(authToken, commands[1]);
+                    if (result.gameID() != 0 ) {
+                        System.out.print(SET_TEXT_ITALIC + SET_TEXT_COLOR_MAGENTA +
+                                "Creation Successful! Your game is " + result.gameID() +
+                                RESET_TEXT_ITALIC + RESET_TEXT_COLOR);
+                    } else {
+                        System.out.print("Creation Failed: Internal Server Error");
+                    }
+                } catch (ServerFacadeException e) {
+                    System.out.print("Failed to create game: " + e.getMessage());
                 }
 
         }

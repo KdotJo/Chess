@@ -20,6 +20,7 @@ import java.net.http.HttpResponse;
 public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient();
     private final String serverUrl;
+    private String authToken;
 
     private HttpRequest.BodyPublisher makeBody (Object request) {
         if (request != null) {
@@ -33,9 +34,12 @@ public class ServerFacade {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
                 .method(method, makeBody(body));
-//        System.out.println("Attempting request to: " + serverUrl + path);
+        System.out.println("Attempting request to: " + serverUrl + path);
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
+        }
+        if (authToken != null && !authToken.isEmpty()) {
+            request.setHeader("Authorization", "Bearer " + authToken);
         }
         return request.build();
     }
@@ -52,11 +56,12 @@ public class ServerFacade {
             }
             return http;
         } catch (Exception e) {
-//            System.out.println("Exception class: " + e.getClass());
-//            System.out.println("Exception message: " + e.getMessage());
+            System.out.println("Exception class: " + e.getClass());
+            System.out.println("Exception message: " + e.getMessage());
             throw new ServerFacadeException("HTTP has failed to communicate", e);
         }
     }
+
 
     public <Http extends HttpFacadeRequest, Obj> Obj facadeMethod(Http request, Class<Obj> result) throws ServerFacadeException{
         HttpRequest httpRequest = buildRequest(request.getMethodName(), request.getPathName(), request);
@@ -65,42 +70,33 @@ public class ServerFacade {
         return gson.fromJson(response.body(), result);
     }
 
+
     public ServerFacade(String url) {
         serverUrl = url;
     }
 
     public RegisterResult register(String username, String password, String email) throws ServerFacadeException {
         RegisterRequest registerRequest = new RegisterRequest(username, password, email);
-        return facadeMethod(registerRequest, RegisterResult.class);
+        RegisterResult result =  facadeMethod(registerRequest, RegisterResult.class);
+        this.authToken = result.authToken();
+        return result;
     }
 
     public LoginResult login(String username, String password) throws ServerFacadeException {
         LoginRequest loginRequest = new LoginRequest(username, password);
-        return facadeMethod(loginRequest, LoginResult.class);
-
-        /* working codes
-        LoginRequest loginRequest = new LoginRequest(username, password);
-        HttpRequest httpRequest = buildRequest("POST", "/session", loginRequest);
-        HttpResponse<String> response = response(httpRequest);
-        Gson gson = new Gson();
-        return gson.fromJson(response.body(), LoginResult.class);
-        */
+        LoginResult result =  facadeMethod(loginRequest, LoginResult.class);
+        this.authToken = result.authToken();
+        return result;
     }
 
-/*
-    public LogoutResult logout(String authToken) throws ServerFacadeException {
-        LogoutRequest logoutRequest = new LogoutRequest(authToken);
-        HttpRequest httpRequest = buildRequest("DELETE", "/session", logoutRequest);
-        HttpResponse<String> response = response(httpRequest);
-        Gson gson = new Gson();
-        return gson.fromJson(response.body(), LogoutResult.class);
-    }
+//    public LogoutResult logout(String authToken) throws ServerFacadeException {
+//        LogoutRequest logoutRequest = new LogoutRequest(authToken);
+//        return facadeMethod(logoutRequest, LogoutResult.class);
+//    }
+
     public CreateGameResult create(String authToken, String gameName) throws ServerFacadeException {
-        CreateGameRequest createGameRequest = new CreateGameRequest(authToken, gameName);
-        HttpResponse<String> response = response(httpRequest);
-        Gson gson = new Gson();
-        return gson.fromJson(response.body(), CreateGameResult.class);
+        CreateGameRequest createGameRequest = new CreateGameRequest(gameName);
+        this.authToken = authToken;
+        return facadeMethod(createGameRequest, CreateGameResult.class);
     }
-*/
-
 }
