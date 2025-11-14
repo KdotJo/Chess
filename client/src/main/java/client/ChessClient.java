@@ -2,8 +2,12 @@ package client;
 
 import java.util.Scanner;
 
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessPiece;
 import exceptions.ServerFacadeException;
 import result.*;
+import ui.EscapeSequences;
 
 import static ui.EscapeSequences.*;
 
@@ -28,12 +32,64 @@ public class ChessClient {
         return """
                 - create <NAME> (Creating a game)
                 - list (List games)
-                - join <ID> [WHITE][BLACK] (Joining a game)
-                - spectate <ID> (Spectate a game) 
+                - join [WHITE][BLACK] <ID> (Joining a game)
+                - spectate <ID> (Spectate a game)
                 - resign (Resign from your game: This means you lose)
                 - help (List of commands)
                 - logout (Logout of your account)
                 """;
+    }
+
+    public static String getPiece(ChessPiece.PieceType type, ChessGame.TeamColor color) {
+        String types = type.toString().toUpperCase();
+        String colors = color.toString().toUpperCase();
+
+        switch (colors) {
+            case "WHITE":
+                switch (types) {
+                    case "KING": return WHITE_KING;
+                    case "QUEEN": return WHITE_QUEEN;
+                    case "PAWN": return WHITE_PAWN;
+                    case "KNIGHT": return WHITE_KNIGHT;
+                    case "ROOK": return WHITE_ROOK;
+                    case "BISHOP": return WHITE_BISHOP;
+                }
+                break;
+            case "BLACK":
+                switch (types) {
+                    case "KING": return BLACK_KING;
+                    case "QUEEN": return BLACK_QUEEN;
+                    case "PAWN": return BLACK_PAWN;
+                    case "KNIGHT": return BLACK_KNIGHT;
+                    case "ROOK": return BLACK_ROOK;
+                    case "BISHOP": return BLACK_BISHOP;
+                }
+                break;
+        }
+        return EMPTY;
+    }
+
+    public void board(ChessPiece[][] board) {
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                boolean whiteSquare = (row + col) % 2 == 0;
+                if (whiteSquare) {
+                    String bg = SET_BG_COLOR_WHITE;
+
+                } else {
+                    String bg = SET_BG_COLOR_BLUE;
+                }
+                ChessPiece piece = board[row][col];
+                String pieceType;
+                if (piece == null) {
+                    pieceType = EMPTY;
+                } else {
+                    pieceType = getPiece(piece.getPieceType(), piece.getTeamColor());
+                }
+                System.out.print(pieceType);
+            }
+            System.out.println();
+        }
     }
 
 
@@ -138,15 +194,19 @@ public class ChessClient {
                     System.out.print("Failed to list games: " + e.getMessage());
                 }
                 break;
+            case "help":
+                System.out.print(help());
+                break;
             case "join":
                 try {
                     if (commands.length < 3) {
                         System.out.print("Please Enter Fields: join <ID> [WHITE][BLACK]");
                     }
                     int id = Integer.parseInt(commands[2]);
-                    serverFacade.join(commands[1], id);
-                    System.out.print("You have successfully joined a game! You are team " + commands[1] +
-                            "Best of luck brave Tarnished");
+                    String color = commands[1].toUpperCase();
+                    JoinGameResult result = serverFacade.join(color, id);
+                    System.out.print("You have successfully joined a game! You are team " + color +
+                            "\nBest of luck brave Tarnished" + "\n");
                 } catch (ServerFacadeException e) {
                     System.out.print("Failed to join game: " + e.getMessage());
                 }

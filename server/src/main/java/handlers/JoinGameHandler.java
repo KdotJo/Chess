@@ -17,7 +17,7 @@ public class JoinGameHandler {
     }
     public void handleJoinGame (Context ctx) throws DataAccessException {
         try {
-            String authToken = ctx.header("authorization");
+            String authToken = ctx.header("Authorization");
             JoinGameRequest request = ctx.bodyAsClass(JoinGameRequest.class);
             if (authToken == null) {
                 ctx.status(401).json(Map.of("message", "Error: Missing Auth Token"));
@@ -36,7 +36,7 @@ public class JoinGameHandler {
                 return;
             }
             JoinGameResult result = gameService.join(authToken, request);
-            ctx.status(200).json(Map.of());
+            ctx.status(200).json(result);
         } catch (DataAccessException e) {
             if ("failed to get connection".equals(e.getMessage())) {
                 ctx.status(500).json(Map.of("message", e.getMessage().contains("Error") ? e.getMessage() : "Error: " + e.getMessage()));
