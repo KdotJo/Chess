@@ -3,10 +3,7 @@ package client;
 import java.util.Scanner;
 
 import exceptions.ServerFacadeException;
-import result.CreateGameResult;
-import result.LoginResult;
-import result.LogoutResult;
-import result.RegisterResult;
+import result.*;
 
 import static ui.EscapeSequences.*;
 
@@ -120,14 +117,26 @@ public class ChessClient {
                 } catch (ServerFacadeException e) {
                     System.out.print("Failed to create game: " + e.getMessage());
                 }
-
+                break;
+            case "list":
+                try {
+                    serverFacade.list();
+                } catch (ServerFacadeException e) {
+                    System.out.print("Failed to list games: " + e.getMessage());
+                }
+                break;
             case "logout":
                 try {
                     serverFacade.logout();
+                    this.authToken = null;
+                    state = State.SIGNEDOUT;
+                    System.out.print(SET_TEXT_ITALIC + SET_TEXT_COLOR_MAGENTA +
+                            "Logout Successful" + "\n");
                     return "quit";
                 } catch (ServerFacadeException e) {
                     System.out.print("Failed to logout " + e.getMessage());
                 }
+                break;
         }
         return "";
     }

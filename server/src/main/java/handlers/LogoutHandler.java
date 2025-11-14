@@ -22,9 +22,6 @@ public class LogoutHandler {
                 ctx.status(401).json(Map.of("message", "Error: Unauthorized"));
                 return;
             }
-            if (authToken.startsWith("Bearer ")) {
-                authToken = authToken.substring("Bearer ".length());
-            }
             LogoutRequest req = new LogoutRequest(authToken);
             LogoutResult result = userService.logout(req);
             ctx.status(200).json(result);

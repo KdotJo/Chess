@@ -2,15 +2,10 @@ package client;
 
 import com.google.gson.Gson;
 import exceptions.ServerFacadeException;
-import request.CreateGameRequest;
-import request.LoginRequest;
-import request.LogoutRequest;
-import request.RegisterRequest;
+import request.*;
 
-import result.CreateGameResult;
-import result.LoginResult;
-import result.LogoutResult;
-import result.RegisterResult;
+import result.*;
+
 import java.net.URI;
 import dataaccess.interfaces.HttpFacadeRequest;
 import java.net.http.HttpClient;
@@ -38,7 +33,7 @@ public class ServerFacade {
             request.setHeader("Content-Type", "application/json");
         }
         if (authToken != null && !authToken.isEmpty()) {
-            request.setHeader("Authorization", "Bearer " + authToken);
+            request.setHeader("Authorization", authToken);
         }
         return request.build();
     }
@@ -55,8 +50,6 @@ public class ServerFacade {
             }
             return http;
         } catch (Exception e) {
-            System.out.println("Exception class: " + e.getClass());
-            System.out.println("Exception message: " + e.getMessage());
             throw new ServerFacadeException("HTTP has failed to communicate", e);
         }
     }
@@ -96,5 +89,10 @@ public class ServerFacade {
     public CreateGameResult create(String gameName) throws ServerFacadeException {
         CreateGameRequest createGameRequest = new CreateGameRequest(authToken, gameName);
         return facadeMethod(createGameRequest, CreateGameResult.class);
+    }
+
+    public ListGamesResult list() throws ServerFacadeException {
+        ListGamesRequest listGamesRequest = new ListGamesRequest(authToken);
+        return facadeMethod(listGamesRequest, ListGamesResult.class);
     }
 }

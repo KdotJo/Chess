@@ -22,9 +22,6 @@ public class CreateGameHandler {
                 ctx.status(400).json(Map.of("message", "Error: Unauthorized"));
                 return;
             }
-            if (authToken.startsWith("Bearer ")) {
-                authToken = authToken.substring("Bearer ".length());
-            }
             if (request.gameName() == null || request.gameName().isEmpty()) {
                 ctx.status(400).json(Map.of("message", "Error: Game name is missing"));
                 return;
