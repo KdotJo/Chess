@@ -36,6 +36,8 @@ public class ChessClient {
                 """;
     }
 
+
+
     private String loggedOut(String input) {
         String[] commands = input.split("\\s+");
         if (commands.length == 0 || commands[0].isEmpty()) {return "";}
@@ -129,11 +131,24 @@ public class ChessClient {
                                 RESET_TEXT_ITALIC + RESET_TEXT_COLOR);
                         for (var game : result.games()) {
                             System.out.print("* " + game.getGameID() + " " + game.getWhiteUsername() + " " +
-                                    game.getBlackUsername() + " " + game.getGameName());
+                                    game.getBlackUsername() + " " + game.getGameName() + "\n");
                         }
                     }
                 } catch (ServerFacadeException e) {
                     System.out.print("Failed to list games: " + e.getMessage());
+                }
+                break;
+            case "join":
+                try {
+                    if (commands.length < 3) {
+                        System.out.print("Please Enter Fields: join <ID> [WHITE][BLACK]");
+                    }
+                    int id = Integer.parseInt(commands[2]);
+                    serverFacade.join(commands[1], id);
+                    System.out.print("You have successfully joined a game! You are team " + commands[1] +
+                            "Best of luck brave Tarnished");
+                } catch (ServerFacadeException e) {
+                    System.out.print("Failed to join game: " + e.getMessage());
                 }
                 break;
             case "logout":

@@ -95,4 +95,8 @@ public class ServerFacade {
         ListGamesRequest listGamesRequest = new ListGamesRequest(authToken);
         return facadeMethod(listGamesRequest, ListGamesResult.class);
     }
+    public JoinGameResult join(String playerColor, int gameID) throws ServerFacadeException {
+        JoinGameRequest joinGameRequest = new JoinGameRequest(authToken, playerColor, gameID);
+        return facadeMethod(joinGameRequest, JoinGameResult.class);
+    }
 }
