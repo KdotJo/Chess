@@ -20,12 +20,14 @@ public class GetGameHandler {
 
     public void handleGetGame(Context ctx) throws DataAccessException {
         try {
-            int gameId = Integer.parseInt(ctx.pathParam("Id"));
+            int gameId = Integer.parseInt(ctx.pathParam("id"));
             GetGameRequest request = new GetGameRequest(gameId);
             GetGameResult result = gameService.get(request);
             ctx.json(result);
         } catch (DataAccessException e) {
             ctx.status(401).json(Map.of("message", e.getMessage().contains("Error") ? e.getMessage() : "Error: " + e.getMessage()));
+        } catch (NumberFormatException e) {
+            ctx.status(400).json(Map.of("message", "Invalid game id."));
         }
     }
 }
