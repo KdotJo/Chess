@@ -2,7 +2,6 @@ package client;
 
 import com.google.gson.Gson;
 import exceptions.ServerFacadeException;
-import model.GameData;
 import request.*;
 
 import result.*;

@@ -1,6 +1,4 @@
-import chess.*;
 import client.ChessClient;
-import client.State;
 
 public class Main {
 
