@@ -1,16 +1,16 @@
 package service;
 
+import chess.ChessBoard;
 import chess.ChessGame;
+import com.google.gson.Gson;
 import dataaccess.interfaces.AuthDataAccess;
 import dataaccess.interfaces.GameDataAccess;
 import dataaccess.DataAccessException;
 import model.GameData;
 import request.CreateGameRequest;
+import request.GetGameRequest;
 import request.JoinGameRequest;
-import result.ClearResult;
-import result.CreateGameResult;
-import result.JoinGameResult;
-import result.ListGamesResult;
+import result.*;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -41,6 +41,14 @@ public class GameService {
         GameData gameData = new GameData(gameId, null, null, createGameRequest.gameName(), newGame);
         gameDao.createGame(gameData);
         return new CreateGameResult(gameId);
+    }
+
+    public GetGameResult get(GetGameRequest getGameRequest) throws DataAccessException {
+        GameData game = gameDao.getGame(getGameRequest.gameID());
+        if (game == null) {throw new DataAccessException("Error: Missing GameID");}
+        String boardJson = game.getGame().toString();
+        ChessBoard board = new Gson().fromJson(boardJson, ChessBoard.class);
+        return new GetGameResult(board);
     }
 
     public JoinGameResult join(String authToken, JoinGameRequest joinGameRequest) throws DataAccessException {

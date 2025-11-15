@@ -37,6 +37,10 @@ public class ChessBoard {
         return board[position.getRow()-1][position.getColumn()-1];
     }
 
+    public ChessPiece[][] getBoard() {
+        return board;
+    }
+
     public ChessBoard deepCopy() {
         ChessBoard board = new ChessBoard();
         for (int row = 0; row < 8; row++) {

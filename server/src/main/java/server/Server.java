@@ -18,6 +18,7 @@ public class Server {
 
     private final Javalin javalin;
     private final RegistrationHandler registrationHandler;
+    private final GetGameHandler getGameHandler;
     private final DatabaseHandler databaseHandler;
     private final LoginHandler loginHandler;
     private final LogoutHandler logoutHandler;
@@ -37,6 +38,7 @@ public class Server {
             this.loginHandler = new LoginHandler(userService);
             this.logoutHandler = new LogoutHandler(userService);
             this.createGameHandler = new CreateGameHandler(gameService);
+            this.getGameHandler = new GetGameHandler(gameService);
             this.joinGameHandler = new JoinGameHandler(gameService);
             this.listGamesHandler = new ListGamesHandler(gameService);
         } catch (DataAccessException e) {
@@ -47,6 +49,7 @@ public class Server {
             config.jsonMapper(new JavalinGson());
         })
             .put("/game", joinGameHandler::handleJoinGame)
+            .get("/data", getGameHandler::handleGetGame)
             .get("/game", listGamesHandler::handleListGames)
             .post("/game", createGameHandler::handleCreateGame)
             .post("/session", loginHandler::handleLogin)

@@ -201,12 +201,15 @@ public class ChessClient {
                 try {
                     if (commands.length < 3) {
                         System.out.print("Please Enter Fields: join <ID> [WHITE][BLACK]");
+                        break;
                     }
                     int id = Integer.parseInt(commands[2]);
                     String color = commands[1].toUpperCase();
-                    JoinGameResult result = serverFacade.join(color, id);
+                    serverFacade.join(color, id);
                     System.out.print("You have successfully joined a game! You are team " + color +
                             "\nBest of luck brave Tarnished" + "\n");
+                    GetGameResult result = serverFacade.get(id);
+                    board(result.chessBoard().getBoard());
                 } catch (ServerFacadeException e) {
                     System.out.print("Failed to join game: " + e.getMessage());
                 }
