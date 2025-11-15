@@ -2,6 +2,7 @@ package client;
 
 import com.google.gson.Gson;
 import exceptions.ServerFacadeException;
+import model.GameData;
 import request.*;
 
 import result.*;
@@ -42,6 +43,8 @@ public class ServerFacade {
         try {
             HttpResponse<String> http = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (http.statusCode() != 200) {
+                System.err.println("❌ Server returned " + http.statusCode());
+                System.err.println("❌ Response body: " + http.body());
                 System.out.print(http);
                 String error = http.body();
                 throw new ServerFacadeException(
@@ -97,8 +100,8 @@ public class ServerFacade {
         return facadeMethod(listGamesRequest, ListGamesResult.class);
     }
 
-    public JoinGameResult join(String playerColor, int gameID) throws ServerFacadeException {
-        JoinGameRequest joinGameRequest = new JoinGameRequest(authToken, playerColor, gameID);
+    public JoinGameResult join(String role, String playerColor, int gameID) throws ServerFacadeException {
+        JoinGameRequest joinGameRequest = new JoinGameRequest(role, authToken, playerColor, gameID);
         return facadeMethod(joinGameRequest, JoinGameResult.class);
     }
 }

@@ -3,7 +3,7 @@ package request;
 import chess.ChessGame;
 import dataaccess.interfaces.HttpFacadeRequest;
 
-public record JoinGameRequest(String authToken, String playerColor, int gameID) implements HttpFacadeRequest {
+public record JoinGameRequest(String role, String authToken, String playerColor, int gameID) implements HttpFacadeRequest {
 
     public static String methodName = "PUT";
     public static String pathName = "/game";

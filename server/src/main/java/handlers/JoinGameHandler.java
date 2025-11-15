@@ -31,9 +31,11 @@ public class JoinGameHandler {
                 ctx.status(400).json(Map.of("message", "Error: Missing Team Color"));
                 return;
             }
-            if (!request.playerColor().equals("WHITE") && !request.playerColor().equals("BLACK")) {
-                ctx.status(400).json(Map.of("message", "Error: Invalid Team Color"));
-                return;
+            if (!request.role().equals("spectate")) {
+                if (!request.playerColor().equals("WHITE") && !request.playerColor().equals("BLACK")) {
+                    ctx.status(400).json(Map.of("message", "Error: Invalid Team Color"));
+                    return;
+                }
             }
             JoinGameResult result = gameService.join(authToken, request);
             ctx.status(200).json(result);

@@ -1,4 +1,6 @@
 package result;
 
-public record JoinGameResult() {
+import model.GameData;
+
+public record JoinGameResult(GameData gameData) {
 }

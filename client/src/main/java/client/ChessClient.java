@@ -5,9 +5,9 @@ import java.util.Scanner;
 import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
+import chess.ChessPosition;
 import exceptions.ServerFacadeException;
 import result.*;
-import ui.EscapeSequences;
 
 import static ui.EscapeSequences.*;
 
@@ -33,7 +33,7 @@ public class ChessClient {
                 - create <NAME> (Creating a game)
                 - list (List games)
                 - join [WHITE][BLACK] <ID> (Joining a game)
-                - spectate <ID> (Spectate a game)
+                - spectate [WHITE][BLACK] <ID> (Spectate a game)
                 - resign (Resign from your game: This means you lose)
                 - help (List of commands)
                 - logout (Logout of your account)
@@ -69,29 +69,45 @@ public class ChessClient {
         return EMPTY;
     }
 
-    public void board(ChessPiece[][] board) {
+    public void board(ChessPiece[][] board, String color) {
+        if (color.equals("WHITE")){
+            ChessPiece[][] whiteBoard = new ChessPiece[8][8];
+            for (int row = 0; row < 8; row++) {
+                whiteBoard[row] = board[7-row];
+            }
+            board = whiteBoard;
+        }
+        String pieceType;
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
-                boolean whiteSquare = (row + col) % 2 == 0;
-                if (whiteSquare) {
-                    String bg = SET_BG_COLOR_WHITE;
-
-                } else {
-                    String bg = SET_BG_COLOR_BLUE;
-                }
                 ChessPiece piece = board[row][col];
-                String pieceType;
-                if (piece == null) {
-                    pieceType = EMPTY;
-                } else {
-                    pieceType = getPiece(piece.getPieceType(), piece.getTeamColor());
-                }
-                System.out.print(pieceType);
+                boolean whiteSquare = (row + col) % 2 == 0;
+                    if (piece == null) {
+                        pieceType = EMPTY;
+                    } else {
+                        pieceType = getPiece(piece.getPieceType(), piece.getTeamColor());
+                    }
+                    String bg = whiteSquare ? SET_BG_COLOR_WHITE : SET_BG_COLOR_BLUE;
+                    System.out.print(bg + pieceType + RESET_BG_COLOR);
             }
             System.out.println();
         }
     }
 
+    private void display(String message, String lower, String color, int id) throws ServerFacadeException {
+        JoinGameResult result = serverFacade.join(lower, color, id);
+        System.out.print(message);
+        if (result != null && result.gameData().getGame().getBoard() != null) {
+            ChessBoard cb = result.gameData().getGame().getBoard();
+            ChessPiece[][] pieces = new ChessPiece[8][8];
+            for (int row = 1; row <= 8; row++) {
+                for (int col = 1; col <= 8; col++) {
+                    pieces[row-1][col-1] = cb.getPiece(new ChessPosition(row, col));
+                }
+            }
+            board(pieces, color);
+        }
+    }
 
 
     private String loggedOut(String input) {
@@ -200,14 +216,28 @@ public class ChessClient {
             case "join":
                 try {
                     if (commands.length < 3) {
-                        System.out.print("Please Enter Fields: join <ID> [WHITE][BLACK]");
+                        System.out.print("Please Enter Fields: join [WHITE][BLACK] <ID>");
                         break;
                     }
                     int id = Integer.parseInt(commands[2]);
                     String color = commands[1].toUpperCase();
-                    serverFacade.join(color, id);
-                    System.out.print("You have successfully joined a game! You are team " + color +
-                            "\nBest of luck brave Tarnished" + "\n");
+                    String message = "You have successfully joined a game! You are team " + color +
+                            "\nBest of luck brave Tarnished" + "\n\n";
+                    display(message, lower, color, id);
+                } catch (ServerFacadeException e) {
+                    System.out.print("Failed to join game: " + e.getMessage());
+                }
+                break;
+            case "spectate":
+                try {
+                    if (commands.length < 3) {
+                        System.out.print("Please Enter Fields: spectate [WHITE][BLACK] <ID>");
+                        break;
+                    }
+                    int id = Integer.parseInt(commands[2]);
+                    String color = commands[1].toUpperCase();
+                    String message = "You are now spectating " + color + "\n\n";
+                    display(message, lower, color, id);
                 } catch (ServerFacadeException e) {
                     System.out.print("Failed to join game: " + e.getMessage());
                 }
