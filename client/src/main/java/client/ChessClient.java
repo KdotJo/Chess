@@ -208,8 +208,6 @@ public class ChessClient {
                     serverFacade.join(color, id);
                     System.out.print("You have successfully joined a game! You are team " + color +
                             "\nBest of luck brave Tarnished" + "\n");
-                    GetGameResult result = serverFacade.get(id);
-                    board(result.chessBoard().getBoard());
                 } catch (ServerFacadeException e) {
                     System.out.print("Failed to join game: " + e.getMessage());
                 }

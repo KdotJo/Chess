@@ -42,6 +42,7 @@ public class ServerFacade {
         try {
             HttpResponse<String> http = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (http.statusCode() != 200) {
+                System.out.print(http);
                 String error = http.body();
                 throw new ServerFacadeException(
                         "Server error: " + http.statusCode() +
@@ -99,10 +100,5 @@ public class ServerFacade {
     public JoinGameResult join(String playerColor, int gameID) throws ServerFacadeException {
         JoinGameRequest joinGameRequest = new JoinGameRequest(authToken, playerColor, gameID);
         return facadeMethod(joinGameRequest, JoinGameResult.class);
-    }
-
-    public GetGameResult get(int gameId) throws ServerFacadeException {
-        GetGameRequest getGameRequest = new GetGameRequest(gameId);
-        return facadeMethod(getGameRequest, GetGameResult.class);
     }
 }
