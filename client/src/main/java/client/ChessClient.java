@@ -34,9 +34,9 @@ public class ChessClient {
                 - list (List games)
                 - join [WHITE][BLACK] <ID> (Joining a game)
                 - spectate [WHITE][BLACK] <ID> (Spectate a game)
-                - resign (Resign from your game: This means you lose)
                 - help (List of commands)
                 - logout (Logout of your account)
+                - quit
                 """;
     }
 
@@ -198,7 +198,7 @@ public class ChessClient {
                     if (result == null) {
                         System.out.print("No games are currently created... Please create a game!!!");
                     } else {
-                        System.out.print(SET_TEXT_ITALIC + SET_TEXT_COLOR_MAGENTA +
+                        System.out.print(SET_TEXT_ITALIC + SET_TEXT_COLOR_GREEN +
                                 "Current Games \n" + "Game Id | White Player | Black Player | Game Name \n" +
                                 RESET_TEXT_ITALIC + RESET_TEXT_COLOR);
                         for (var game : result.games()) {
@@ -248,12 +248,14 @@ public class ChessClient {
                     this.authToken = null;
                     state = State.SIGNEDOUT;
                     System.out.print(SET_TEXT_ITALIC + SET_TEXT_COLOR_MAGENTA +
-                            "Logout Successful" + "\n");
-                    return "quit";
+                            "Logout Successful" + "\n" + RESET_TEXT_ITALIC + RESET_TEXT_COLOR);
+                    System.out.println(help());
                 } catch (ServerFacadeException e) {
                     System.out.print("Failed to logout " + e.getMessage());
                 }
                 break;
+            case "quit":
+                return "quit";
         }
         return "";
     }
