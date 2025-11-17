@@ -3,9 +3,7 @@ package handlers;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import request.LoginRequest;
-import request.RegisterRequest;
 import result.LoginResult;
-import result.RegisterResult;
 import service.UserService;
 
 import java.util.Map;

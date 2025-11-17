@@ -2,12 +2,9 @@ package handlers;
 
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
-import model.GameData;
-import request.ListGamesRequest;
 import result.ListGamesResult;
 import service.GameService;
 
-import java.util.Collection;
 import java.util.Map;
 
 public class ListGamesHandler {

@@ -6,7 +6,6 @@ import request.RegisterRequest;
 import result.RegisterResult;
 import service.UserService;
 
-import java.sql.SQLException;
 import java.util.Map;
 
 public class RegistrationHandler {

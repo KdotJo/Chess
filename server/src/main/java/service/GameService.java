@@ -1,15 +1,12 @@
     package service;
 
-    import chess.ChessBoard;
     import chess.ChessGame;
-    import com.google.gson.Gson;
     import dataaccess.interfaces.AuthDataAccess;
     import dataaccess.interfaces.GameDataAccess;
     import dataaccess.DataAccessException;
     import model.GameData;
     import request.CreateGameRequest;
     import request.JoinGameRequest;
-    import result.*;
 
     import java.util.Collection;
     import java.util.UUID;

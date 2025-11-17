@@ -4,10 +4,10 @@ import com.google.gson.Gson;
 import exceptions.ServerFacadeException;
 import request.*;
 
-import result.*;
-
 import java.net.URI;
 import HttpRequest.HttpFacadeRequest;
+import result.*;
+
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
