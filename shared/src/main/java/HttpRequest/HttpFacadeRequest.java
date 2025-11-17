@@ -1,4 +1,4 @@
-package dataaccess.interfaces;
+package HttpRequest;
 
 public interface HttpFacadeRequest {
     String getMethodName();

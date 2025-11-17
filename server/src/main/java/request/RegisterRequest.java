@@ -1,6 +1,6 @@
 package request;
 
-import dataaccess.interfaces.HttpFacadeRequest;
+import HttpRequest.HttpFacadeRequest;
 
 public record RegisterRequest(String username,
                               String password,

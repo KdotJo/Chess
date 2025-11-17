@@ -1,7 +1,6 @@
 package request;
 
-import chess.ChessGame;
-import dataaccess.interfaces.HttpFacadeRequest;
+import HttpRequest.HttpFacadeRequest;
 
 public record JoinGameRequest(String role, String authToken, String playerColor, int gameID) implements HttpFacadeRequest {
 
