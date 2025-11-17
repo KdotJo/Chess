@@ -42,8 +42,8 @@ public class ServerFacade {
         try {
             HttpResponse<String> http = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (http.statusCode() != 200) {
-                System.err.println("❌ Server returned " + http.statusCode());
-                System.err.println("❌ Response body: " + http.body());
+                System.err.println("Server returned " + http.statusCode());
+                System.err.println("Response body: " + http.body());
                 System.out.print(http);
                 String error = http.body();
                 throw new ServerFacadeException(
