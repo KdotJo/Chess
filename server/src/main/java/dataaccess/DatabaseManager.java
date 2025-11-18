@@ -17,6 +17,35 @@ public class DatabaseManager {
         loadPropertiesFromResources();
     }
 
+    static String[] createStatements = {
+        """
+        CREATE TABLE IF NOT EXISTS authTokens (
+        authToken varchar(256) NOT NULL,
+        username varchar(256) NOT NULL,
+        PRIMARY KEY (authToken)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+        """,
+
+        """
+        CREATE TABLE IF NOT EXISTS games (
+        gameID int NOT NULL,
+        whiteUsername varchar(256) DEFAULT NULL,
+        blackUsername varchar(256) DEFAULT NULL,
+        gameName varchar(256) NOT NULL,
+        game TEXT DEFAULT NULL,
+        PRIMARY KEY (gameID)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS users (
+        username varchar(256) NOT NULL,
+        password varchar(256) NOT NULL,
+        email varchar(256) NOT NULL,
+        PRIMARY KEY (username)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+        """
+    };
+
     /**
      * Creates the database if it does not already exist.
      */
@@ -53,37 +82,10 @@ public class DatabaseManager {
         }
     }
 
-    public static void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (Connection connection = DatabaseManager.getConnection()) {
-            String[] createStatements = {
-                """
-                CREATE TABLE IF NOT EXISTS authTokens (
-                authToken varchar(256) NOT NULL,
-                username varchar(256) NOT NULL,
-                PRIMARY KEY (authToken)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-                """,
 
-                """
-                CREATE TABLE IF NOT EXISTS games (
-                gameID int NOT NULL,
-                whiteUsername varchar(256) DEFAULT NULL,
-                blackUsername varchar(256) DEFAULT NULL,
-                gameName varchar(256) NOT NULL,
-                game TEXT DEFAULT NULL,
-                PRIMARY KEY (gameID)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-                """,
-                """
-                CREATE TABLE IF NOT EXISTS users (
-                username varchar(256) NOT NULL,
-                password varchar(256) NOT NULL,
-                email varchar(256) NOT NULL,
-                PRIMARY KEY (username)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-                """
-            };
+    public static void configureDatabase() throws DataAccessException {
+        createDatabase();
+        try (Connection connection = getConnection()) {
             for (String statement : createStatements) {
                 try (var preparedStatement = connection.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
@@ -93,7 +95,6 @@ public class DatabaseManager {
             throw new DataAccessException("Unable to configure database", e);
         }
     }
-
 
     private static void loadPropertiesFromResources() {
         try (var propStream = Thread.currentThread()
