@@ -1,6 +1,6 @@
 package request;
 
-import HttpRequest.HttpFacadeRequest;
+import http.HttpFacadeRequest;
 
 public record LogoutRequest(String authToken) implements HttpFacadeRequest {
 

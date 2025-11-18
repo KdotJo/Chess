@@ -1,6 +1,6 @@
 package request;
 
-import HttpRequest.HttpFacadeRequest;
+import http.HttpFacadeRequest;
 
 public record LoginRequest(String username,
                            String password) implements HttpFacadeRequest {

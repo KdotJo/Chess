@@ -5,7 +5,7 @@ import exceptions.ServerFacadeException;
 import request.*;
 
 import java.net.URI;
-import HttpRequest.HttpFacadeRequest;
+import http.HttpFacadeRequest;
 import result.*;
 
 import java.net.http.HttpClient;

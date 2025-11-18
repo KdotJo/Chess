@@ -1,6 +1,6 @@
 package request;
 
-import HttpRequest.HttpFacadeRequest;
+import http.HttpFacadeRequest;
 
 public record CreateGameRequest(String authToken, String gameName) implements HttpFacadeRequest {
 

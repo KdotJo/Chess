@@ -1,4 +1,4 @@
-package HttpRequest;
+package http;
 
 public interface HttpFacadeRequest {
     String getMethodName();

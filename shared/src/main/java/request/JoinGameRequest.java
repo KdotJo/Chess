@@ -1,6 +1,6 @@
 package request;
 
-import HttpRequest.HttpFacadeRequest;
+import http.HttpFacadeRequest;
 
 public record JoinGameRequest(String authToken, String playerColor, int gameID) implements HttpFacadeRequest {
 
