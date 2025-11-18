@@ -8,7 +8,6 @@
     import request.CreateGameRequest;
     import request.JoinGameRequest;
     import result.*;
-
     import java.util.Collection;
     import java.util.UUID;
 
