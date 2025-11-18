@@ -61,7 +61,7 @@ public class ServerFacade {
     }
 
 
-    public <Http extends HttpFacadeRequest, Obj> Obj facadeMethod(Http request, Class<Obj> result) throws ServerFacadeException{
+    public <http extends HttpFacadeRequest, obj> obj facadeMethod(http request, Class<obj> result) throws ServerFacadeException{
         HttpRequest httpRequest = buildRequest(request.getMethodName(), request.getPathName(), request);
         HttpResponse<String> response = response(httpRequest);
         Gson gson = new Gson();

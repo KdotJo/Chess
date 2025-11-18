@@ -9,32 +9,6 @@ import org.mindrot.jbcrypt.BCrypt;
 
 
 public class MySqlUserDao implements UserDataAccess {
-    public MySqlUserDao() throws DataAccessException {
-        configureDatabase();
-    }
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS users (
-            username varchar(256) NOT NULL,
-            password varchar(256) NOT NULL,
-            email varchar(256) NOT NULL,
-            PRIMARY KEY (username)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """
-    };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (Connection connection = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
-                try (var preparedStatement = connection.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException("Unable to configure database", e);
-        }
-    }
 
     @Override
     public void createUser(UserData userData) throws DataAccessException {

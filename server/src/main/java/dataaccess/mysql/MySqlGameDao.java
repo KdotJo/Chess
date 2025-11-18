@@ -15,35 +15,6 @@ import java.util.Collection;
 
 public class MySqlGameDao implements GameDataAccess {
 
-    public MySqlGameDao() throws DataAccessException {
-        configureDatabase();
-    }
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS games (
-            gameID int NOT NULL,
-            whiteUsername varchar(256) DEFAULT NULL,
-            blackUsername varchar(256) DEFAULT NULL,
-            gameName varchar(256) NOT NULL,
-            game TEXT DEFAULT NULL,
-            PRIMARY KEY (gameID)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """
-    };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (Connection connection = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
-                try (var preparedStatement = connection.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException("Unable to configure database", e);
-        }
-    }
-
     @Override
     public void createGame(GameData gameData) throws DataAccessException {
         var createNewGame = "INSERT INTO games " +

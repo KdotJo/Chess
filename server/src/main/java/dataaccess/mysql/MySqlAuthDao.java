@@ -13,32 +13,6 @@ import java.util.UUID;
 
 public class MySqlAuthDao implements AuthDataAccess {
 
-    public MySqlAuthDao() throws DataAccessException {
-        configureDatabase();
-    }
-
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS authTokens (
-            authToken varchar(256) NOT NULL,
-            username varchar(256) NOT NULL,
-            PRIMARY KEY (authToken)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """
-    };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (Connection connection = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
-                try (var preparedStatement = connection.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException("Unable to configure database", e);
-        }
-    }
 
     @Override
     public String createAuth(String username) throws DataAccessException {
