@@ -123,8 +123,6 @@ public class ChessClient {
         }
     }
 
-
-
     private String loggedOut(String input) {
         String[] commands = input.split("\\s+");
         if (commands.length == 0 || commands[0].isEmpty()) {return "";}
@@ -243,6 +241,10 @@ public class ChessClient {
                         System.out.print("Game ID must be a number.");
                         break;
                     }
+                    if (gameList == null) {
+                        System.out.print("Make sure to list games first!");
+                        break;
+                    }
                     if (id < 0 || id > gameList.size()) {
                         System.out.print("Please Enter In The Bounds: 1 ~ " + gameList.size());
                         break;
@@ -269,6 +271,14 @@ public class ChessClient {
                         id = Integer.parseInt(commands[1]) - 1;
                     } catch (NumberFormatException nfe) {
                         System.out.print("Game ID must be a number.");
+                        break;
+                    }
+                    if (gameList == null) {
+                        System.out.print("Make sure to list games first!");
+                        break;
+                    }
+                    if (id < 0 || id > gameList.size()) {
+                        System.out.print("Please Enter In The Bounds: 1 ~ " + gameList.size());
                         break;
                     }
 //                  int gameid = gameList.get(id).getGameID();

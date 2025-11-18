@@ -48,7 +48,7 @@ public class ServerFacade {
                     Map<?, ?> json = new Gson().fromJson(http.body(), Map.class);
                     message = json.get("message").toString();
                 } catch (Exception parseError) {
-                    message = http.body(); // fallback: return raw body
+                    message = http.body();
                 }
                 throw new ServerFacadeException(message);
             }
