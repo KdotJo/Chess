@@ -1,5 +1,7 @@
 package client;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Scanner;
 
 import chess.ChessBoard;
@@ -7,6 +9,7 @@ import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import exceptions.ServerFacadeException;
+import model.GameData;
 import result.*;
 
 import static ui.EscapeSequences.*;
@@ -33,7 +36,7 @@ public class ChessClient {
                 - create <NAME> (Creating a game)
                 - list (List games)
                 - join [WHITE][BLACK] <ID> (Joining a game)
-                - spectate [WHITE][BLACK] <ID> (Spectate a game)
+                - spectate <ID> (Spectate a game)
                 - help (List of commands)
                 - logout (Logout of your account)
                 - quit
@@ -69,16 +72,25 @@ public class ChessClient {
         return EMPTY;
     }
 
+    private ArrayList<GameData> gameList;
+
     public void board(ChessPiece[][] board, String color) {
+        String letters = "    h  g  f  e  d  c  b  a ";
+        boolean whiteView = false;
         if (color.equals("WHITE")){
+            letters = "    a  b  c  d  e  f  g  h ";
             ChessPiece[][] whiteBoard = new ChessPiece[8][8];
             for (int row = 0; row < 8; row++) {
                 whiteBoard[row] = board[7-row];
+                whiteView = true;
             }
             board = whiteBoard;
         }
+        System.out.println(SET_TEXT_BOLD + letters + RESET_TEXT_BOLD_FAINT);
         String pieceType;
         for (int row = 0; row < 8; row++) {
+            int rank = whiteView ? 8 - row : 1 + row;
+            System.out.print(SET_TEXT_BOLD + " " + rank + " " + RESET_TEXT_BOLD_FAINT);
             for (int col = 0; col < 8; col++) {
                 ChessPiece piece = board[row][col];
                 boolean whiteSquare = (row + col) % 2 == 0;
@@ -90,15 +102,16 @@ public class ChessClient {
                     String bg = whiteSquare ? SET_BG_COLOR_WHITE : SET_BG_COLOR_BLUE;
                     System.out.print(bg + pieceType + RESET_BG_COLOR);
             }
+            System.out.print(SET_TEXT_BOLD + " " + rank + " " + RESET_TEXT_BOLD_FAINT);
             System.out.println();
         }
+        System.out.println(SET_TEXT_BOLD + letters + RESET_TEXT_BOLD_FAINT);
     }
 
-    private void display(String message, String lower, String color, int id) throws ServerFacadeException {
-        JoinGameResult result = serverFacade.join(lower, color, id);
+    private void display(ChessGame result, String message, String color) throws ServerFacadeException {
         System.out.print(message);
-        if (result != null && result.gameData().getGame().getBoard() != null) {
-            ChessBoard cb = result.gameData().getGame().getBoard();
+        if (result != null && result.getBoard() != null) {
+            ChessBoard cb = result.getBoard();
             ChessPiece[][] pieces = new ChessPiece[8][8];
             for (int row = 1; row <= 8; row++) {
                 for (int col = 1; col <= 8; col++) {
@@ -108,6 +121,7 @@ public class ChessClient {
             board(pieces, color);
         }
     }
+
 
 
     private String loggedOut(String input) {
@@ -183,7 +197,7 @@ public class ChessClient {
                     CreateGameResult result = serverFacade.create(commands[1]);
                     if (result.gameID() != 0) {
                         System.out.print(SET_TEXT_ITALIC + SET_TEXT_COLOR_MAGENTA +
-                                "Creation Successful! Your game is " + result.gameID() +
+                                "Creation Successful!" +
                                 RESET_TEXT_ITALIC + RESET_TEXT_COLOR);
                     } else {
                         System.out.print("Creation Failed: Internal Server Error");
@@ -201,9 +215,11 @@ public class ChessClient {
                         System.out.print(SET_TEXT_ITALIC + SET_TEXT_COLOR_GREEN +
                                 "Current Games \n" + "Game Id | White Player | Black Player | Game Name \n" +
                                 RESET_TEXT_ITALIC + RESET_TEXT_COLOR);
-                        for (var game : result.games()) {
-                            System.out.print("* " + game.getGameID() + " " + game.getWhiteUsername() + " " +
-                                    game.getBlackUsername() + " " + game.getGameName() + "\n");
+                        gameList = (ArrayList<GameData>) result.games();
+                        for (int i = 0; i < gameList.size(); i++) {
+                            GameData game = gameList.get(i);
+                            System.out.print("* " + i + " " + game.getWhiteUsername() + " " +
+                                game.getBlackUsername() + " " + game.getGameName() + "\n");
                         }
                     }
                 } catch (ServerFacadeException e) {
@@ -220,24 +236,29 @@ public class ChessClient {
                         break;
                     }
                     int id = Integer.parseInt(commands[2]);
+                    int gameId = gameList.get(id).getGameID();
                     String color = commands[1].toUpperCase();
+                    serverFacade.join(color, gameId);
+                    ChessGame result = new ChessGame();
                     String message = "You have successfully joined a game! You are team " + color +
                             "\nBest of luck brave Tarnished" + "\n\n";
-                    display(message, lower, color, id);
+                    display(result, message, color);
                 } catch (ServerFacadeException e) {
                     System.out.print("Failed to join game: " + e.getMessage());
                 }
                 break;
             case "spectate":
                 try {
-                    if (commands.length < 3) {
-                        System.out.print("Please Enter Fields: spectate [WHITE][BLACK] <ID>");
+                    if (commands.length < 2) {
+                        System.out.print("Please Enter Fields: spectate <ID>");
                         break;
                     }
-                    int id = Integer.parseInt(commands[2]);
-                    String color = commands[1].toUpperCase();
-                    String message = "You are now spectating " + color + "\n\n";
-                    display(message, lower, color, id);
+                    int id = Integer.parseInt(commands[1]);
+                    int gameid = gameList.get(id).getGameID();
+                    ChessGame result = new ChessGame();
+                    String color = "WHITE";
+                    String message = "You are now spectating " +  "\n\n";
+                    display(result, message, color);
                 } catch (ServerFacadeException e) {
                     System.out.print("Failed to join game: " + e.getMessage());
                 }

@@ -50,22 +50,16 @@
             if (getGame == null) {
                 throw new DataAccessException("Error: Can't Get Game");
             }
-            if (teamColor.equals("WHITE") && !joinGameRequest.role().equals("spectate")) {
-                if (getGame.getBlackUsername() != null && getGame.getBlackUsername().equals(username)) {
-                    gameDao.updateGame(getGame.getGameID(), username, null);
-                }
-                else if (getGame.getWhiteUsername() != null && !getGame.getWhiteUsername().equals(username)) {
+            if (teamColor.equals("WHITE")) {
+                if (getGame.getWhiteUsername() != null && !getGame.getWhiteUsername().equals(username)) {
                     throw new DataAccessException("Error: White Team Already Taken");
                 }
                 else {
                     gameDao.updateGame(getGame.getGameID(), username, getGame.getBlackUsername());
                 }
             }
-            if (teamColor.equals("BLACK") && !joinGameRequest.role().equals("spectate")) {
-                if (getGame.getWhiteUsername() != null && getGame.getWhiteUsername().equals(username)) {
-                    gameDao.updateGame(getGame.getGameID(), null, username);
-                }
-                else if (getGame.getBlackUsername() != null && !getGame.getBlackUsername().equals(username)) {
+            if (teamColor.equals("BLACK")) {
+                if (getGame.getBlackUsername() != null && !getGame.getBlackUsername().equals(username)) {
                     throw new DataAccessException("Error: Black Team Already Taken");
                 }
                 else {
@@ -74,6 +68,7 @@
             }
             return new JoinGameResult(gameDao.getGame(joinGameRequest.gameID()));
         }
+
         public ClearResult clear() throws DataAccessException {
             try {
                 gameDao.clear();
