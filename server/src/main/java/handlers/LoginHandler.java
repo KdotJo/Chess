@@ -23,7 +23,7 @@ public class LoginHandler {
                 return;
             }
             if ((req.password() == null || req.password().isEmpty())) {
-                ctx.status(400).json(Map.of("message", "Error: Missing Password"));
+                ctx.status(400).json(Map.of("message", "Error: Bad/Missing Password"));
                 return;
             }
             LoginResult result = userService.login(req);

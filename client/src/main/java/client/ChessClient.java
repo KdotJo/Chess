@@ -91,9 +91,10 @@ public class ChessClient {
         for (int row = 0; row < 8; row++) {
             int rank = whiteView ? 8 - row : 1 + row;
             System.out.print(SET_TEXT_BOLD + " " + rank + " " + RESET_TEXT_BOLD_FAINT);
-            for (int col = 0; col < 8; col++) {
+            for (int j = 0; j < 8; j++) {
+                int col = whiteView ? j : 7 - j;
                 ChessPiece piece = board[row][col];
-                boolean whiteSquare = (row + col) % 2 == 0;
+                boolean whiteSquare = (row + j) % 2 == 0;
                     if (piece == null) {
                         pieceType = EMPTY;
                     } else {
@@ -218,7 +219,7 @@ public class ChessClient {
                         gameList = (ArrayList<GameData>) result.games();
                         for (int i = 0; i < gameList.size(); i++) {
                             GameData game = gameList.get(i);
-                            System.out.print("* " + i + " " + game.getWhiteUsername() + " " +
+                            System.out.print("* " + (i + 1) + " " + game.getWhiteUsername() + " " +
                                 game.getBlackUsername() + " " + game.getGameName() + "\n");
                         }
                     }
@@ -235,7 +236,17 @@ public class ChessClient {
                         System.out.print("Please Enter Fields: join [WHITE][BLACK] <ID>");
                         break;
                     }
-                    int id = Integer.parseInt(commands[2]);
+                    int id;
+                    try {
+                        id = Integer.parseInt(commands[2]) - 1;
+                    } catch (NumberFormatException nfe) {
+                        System.out.print("Game ID must be a number.");
+                        break;
+                    }
+                    if (id < 0 || id > gameList.size()) {
+                        System.out.print("Please Enter In The Bounds: 1 ~ " + gameList.size());
+                        break;
+                    }
                     int gameId = gameList.get(id).getGameID();
                     String color = commands[1].toUpperCase();
                     serverFacade.join(color, gameId);
@@ -253,8 +264,14 @@ public class ChessClient {
                         System.out.print("Please Enter Fields: spectate <ID>");
                         break;
                     }
-                    int id = Integer.parseInt(commands[1]);
-                    int gameid = gameList.get(id).getGameID();
+                    int id;
+                    try {
+                        id = Integer.parseInt(commands[1]) - 1;
+                    } catch (NumberFormatException nfe) {
+                        System.out.print("Game ID must be a number.");
+                        break;
+                    }
+//                  int gameid = gameList.get(id).getGameID();
                     ChessGame result = new ChessGame();
                     String color = "WHITE";
                     String message = "You are now spectating " +  "\n\n";

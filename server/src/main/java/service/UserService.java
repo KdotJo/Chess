@@ -49,9 +49,9 @@ public class UserService {
                 String authToken = authDao.createAuth(loginRequest.username());
                 return new LoginResult(loginRequest.username(), authToken);
             }
-            throw new DataAccessException("Error: Missing Password");
+            throw new DataAccessException("Error: Bad Password");
         }
-        throw new DataAccessException("Error: Bad Request: Likely Unregistered User");
+        throw new DataAccessException("Error: Bad Request: Unregistered User");
 
     }
 

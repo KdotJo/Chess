@@ -11,6 +11,7 @@ import result.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Map;
 
 public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient();
@@ -42,18 +43,20 @@ public class ServerFacade {
         try {
             HttpResponse<String> http = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (http.statusCode() != 200) {
-                System.err.println("Server returned " + http.statusCode());
-                System.err.println("Response body: " + http.body());
-                System.out.print(http);
-                String error = http.body();
-                throw new ServerFacadeException(
-                        "Server error: " + http.statusCode() +
-                        "Error Message: " + error
-                );
+                String message;
+                try {
+                    Map<?, ?> json = new Gson().fromJson(http.body(), Map.class);
+                    message = json.get("message").toString();
+                } catch (Exception parseError) {
+                    message = http.body(); // fallback: return raw body
+                }
+                throw new ServerFacadeException(message);
             }
             return http;
+        } catch (ServerFacadeException e) {
+            throw e;
         } catch (Exception e) {
-            throw new ServerFacadeException("HTTP has failed to communicate", e);
+            throw new ServerFacadeException("HTTP has failed to communicate");
         }
     }
 
