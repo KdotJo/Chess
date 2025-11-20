@@ -184,130 +184,112 @@ public class ChessClient {
 
     private String loggedIn(String input) {
         String[] commands = input.split("\\s+");
-        if (commands.length == 0 || commands[0].isEmpty()) {return "";}
+        if (commands.length == 0 || commands[0].isEmpty()) return "";
+
         String lower = commands[0].toLowerCase();
-        switch(lower) {
-            case "create":
-                if (commands.length < 2) {
-                    System.out.print("Please Enter Fields: create <NAME>");
-                    return "";
-                }
-                try {
-                    CreateGameResult result = serverFacade.create(commands[1]);
-                    if (result.gameID() != 0) {
-                        System.out.print(SET_TEXT_ITALIC + SET_TEXT_COLOR_MAGENTA +
-                                "Creation Successful!" +
-                                RESET_TEXT_ITALIC + RESET_TEXT_COLOR);
-                    } else {
-                        System.out.print("Creation Failed: Internal Server Error");
-                    }
-                } catch (ServerFacadeException e) {
-                    System.out.print("Failed to create game: " + e.getMessage());
-                }
-                break;
-            case "list":
-                try {
-                    ListGamesResult result = serverFacade.list();
-                    if (result == null) {
-                        System.out.print("No games are currently created... Please create a game!!!");
-                    } else {
-                        System.out.print(SET_TEXT_ITALIC + SET_TEXT_COLOR_GREEN +
-                                "Current Games \n" + "Game Id | White Player | Black Player | Game Name \n" +
-                                RESET_TEXT_ITALIC + RESET_TEXT_COLOR);
-                        gameList = (ArrayList<GameData>) result.games();
-                        for (int i = 0; i < gameList.size(); i++) {
-                            GameData game = gameList.get(i);
-                            System.out.print("* " + (i + 1) + " " + game.getWhiteUsername() + " " +
-                                game.getBlackUsername() + " " + game.getGameName() + "\n");
-                        }
-                    }
-                } catch (ServerFacadeException e) {
-                    System.out.print("Failed to list games: " + e.getMessage());
-                }
-                break;
-            case "help":
-                System.out.print(help());
-                break;
-            case "join":
-                try {
-                    if (commands.length < 3) {
-                        System.out.print("Please Enter Fields: join [WHITE][BLACK] <ID>");
-                        break;
-                    }
-                    int id;
-                    try {
-                        id = Integer.parseInt(commands[2]) - 1;
-                    } catch (NumberFormatException nfe) {
-                        System.out.print("Game ID must be a number.");
-                        break;
-                    }
-                    if (gameList == null) {
-                        System.out.print("Make sure to list games first!");
-                        break;
-                    }
-                    if (id < 0 || id > gameList.size()) {
-                        System.out.print("Please Enter In The Bounds: 1 ~ " + gameList.size());
-                        break;
-                    }
-                    int gameId = gameList.get(id).getGameID();
-                    String color = commands[1].toUpperCase();
-                    serverFacade.join(color, gameId);
-                    ChessGame result = new ChessGame();
-                    String message = "You have successfully joined a game! You are team " + color +
-                            "\nBest of luck brave Tarnished" + "\n\n";
-                    display(result, message, color);
-                } catch (ServerFacadeException e) {
-                    System.out.print("Failed to join game: " + e.getMessage());
-                }
-                break;
-            case "spectate":
-                try {
-                    if (commands.length < 2) {
-                        System.out.print("Please Enter Fields: spectate <ID>");
-                        break;
-                    }
-                    int id;
-                    try {
-                        id = Integer.parseInt(commands[1]) - 1;
-                    } catch (NumberFormatException nfe) {
-                        System.out.print("Game ID must be a number.");
-                        break;
-                    }
-                    if (gameList == null) {
-                        System.out.print("Make sure to list games first!");
-                        break;
-                    }
-                    if (id < 0 || id > gameList.size()) {
-                        System.out.print("Please Enter In The Bounds: 1 ~ " + gameList.size());
-                        break;
-                    }
-//                  int gameid = gameList.get(id).getGameID();
-                    ChessGame result = new ChessGame();
-                    String color = "WHITE";
-                    String message = "You are now spectating " +  "\n\n";
-                    display(result, message, color);
-                } catch (ServerFacadeException e) {
-                    System.out.print("Failed to join game: " + e.getMessage());
-                }
-                break;
-            case "logout":
-                try {
-                    serverFacade.logout();
-                    this.authToken = null;
-                    state = State.SIGNEDOUT;
-                    System.out.print(SET_TEXT_ITALIC + SET_TEXT_COLOR_MAGENTA +
-                            "Logout Successful" + "\n" + RESET_TEXT_ITALIC + RESET_TEXT_COLOR);
-                    System.out.println(help());
-                } catch (ServerFacadeException e) {
-                    System.out.print("Failed to logout " + e.getMessage());
-                }
-                break;
-            case "quit":
-                return "quit";
+        try {
+            switch(lower) {
+                case "create" -> handleCreate(commands);
+                case "list" -> handleList();
+                case "help" -> System.out.print(help());
+                case "join" -> handleJoin(commands);
+                case "spectate" -> handleSpectate(commands);
+                case "logout" -> handleLogout();
+                case "quit" -> { return "quit"; }
+            }
+        } catch (ServerFacadeException e) {
+            System.out.print("Failed to " + lower + " game: " + e.getMessage());
         }
         return "";
     }
 
+    private void handleCreate(String[] commands) throws ServerFacadeException {
+        if (commands.length < 2) {
+            System.out.print("Please Enter Fields: create <NAME>");
+            return;
+        }
+        CreateGameResult result = serverFacade.create(commands[1]);
+        if (result.gameID() != 0) {
+            printColored("Creation Successful!", "MAGENTA");
+        } else {
+            System.out.print("Creation Failed: Internal Server Error");
+        }
+    }
+
+    private void handleList() throws ServerFacadeException {
+        ListGamesResult result = serverFacade.list();
+        if (result == null) {
+            System.out.print("No games are currently created... Please create a game!!!");
+            return;
+        }
+        printColored("Current Games \nGame Id | White Player | Black Player | Game Name \n", "GREEN");
+        gameList = (ArrayList<GameData>) result.games();
+        for (int i = 0; i < gameList.size(); i++) {
+            GameData game = gameList.get(i);
+            System.out.print("* " + (i + 1) + " " + game.getWhiteUsername() + " " +
+                    game.getBlackUsername() + " " + game.getGameName() + "\n");
+        }
+    }
+
+    private void handleJoin(String[] commands) throws ServerFacadeException {
+        if (commands.length < 3) {
+            System.out.print("Please Enter Fields: join [WHITE][BLACK] <ID>");
+            return;
+        }
+        int id = parseAndValidateGameId(commands[2]);
+        if (id == -1) return;
+
+        int gameId = gameList.get(id).getGameID();
+        String color = commands[1].toUpperCase();
+        serverFacade.join(color, gameId);
+
+        String message = "You have successfully joined a game! You are team " + color +
+                "\nBest of luck brave Tarnished\n\n";
+        display(new ChessGame(), message, color);
+    }
+
+    private void handleSpectate(String[] commands) throws ServerFacadeException {
+        if (commands.length < 2) {
+            System.out.print("Please Enter Fields: spectate <ID>");
+            return;
+        }
+        int id = parseAndValidateGameId(commands[1]);
+        if (id == -1) return;
+
+        display(new ChessGame(), "You are now spectating\n\n", "WHITE");
+    }
+
+    private void handleLogout() throws ServerFacadeException {
+        serverFacade.logout();
+        this.authToken = null;
+        state = State.SIGNEDOUT;
+        printColored("Logout Successful\n", "MAGENTA");
+        System.out.println(help());
+    }
+
+    private int parseAndValidateGameId(String idStr) {
+        int id;
+        try {
+            id = Integer.parseInt(idStr) - 1;
+        } catch (NumberFormatException e) {
+            System.out.print("Game ID must be a number.");
+            return -1;
+        }
+        if (gameList == null) {
+            System.out.print("Make sure to list games first!");
+            return -1;
+        }
+        if (id < 0 || id >= gameList.size()) {
+            System.out.print("Please Enter In The Bounds: 1 ~ " + gameList.size());
+            return -1;
+        }
+        return id;
+    }
+
+    private void printColored(String message, String color) {
+        String colorCode = color.equals("MAGENTA") ? SET_TEXT_COLOR_MAGENTA : SET_TEXT_COLOR_GREEN;
+        System.out.print(SET_TEXT_ITALIC + colorCode + message + RESET_TEXT_ITALIC + RESET_TEXT_COLOR);
+    }
     private void printPrompt() {
         if (state.equals(State.SIGNEDIN)) {
             System.out.print("\n" + SET_TEXT_COLOR_MAGENTA + "[LOGGED IN] " + ">>> " + RESET_TEXT_COLOR);
