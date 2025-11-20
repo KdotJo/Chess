@@ -1,6 +1,7 @@
 package dataaccess.mysql;
 import java.sql.*;
 
+import dataaccess.DatabaseHelper;
 import dataaccess.DatabaseManager;
 import dataaccess.interfaces.UserDataAccess;
 import dataaccess.DataAccessException;
@@ -12,14 +13,8 @@ public class MySqlUserDao implements UserDataAccess {
 
     @Override
     public void createUser(UserData userData) throws DataAccessException {
-        var createNewUser = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement queryStatement = connection.prepareStatement(createNewUser)) {
-            setUserValues(queryStatement, userData);
-            queryStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new DataAccessException("User Creation Failed", e);
-        } ;
+        var query = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+        DatabaseHelper.executeUpdate(query, "User Creation Failed", ps -> setUserValues(ps, userData));
     }
 
     private void setUserValues (PreparedStatement values, UserData user) throws SQLException {

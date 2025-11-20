@@ -3,6 +3,7 @@ package dataaccess.mysql;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
+import dataaccess.DatabaseHelper;
 import dataaccess.DatabaseManager;
 import dataaccess.interfaces.GameDataAccess;
 import model.GameData;
@@ -17,15 +18,8 @@ public class MySqlGameDao implements GameDataAccess {
 
     @Override
     public void createGame(GameData gameData) throws DataAccessException {
-        var createNewGame = "INSERT INTO games " +
-                "(gameId, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseManager.getConnection();
-            PreparedStatement preparedStatement = conn.prepareStatement(createNewGame)) {
-            setGameValues(preparedStatement, gameData);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new DataAccessException("Failed to create game", e);
-        }
+        var query = "INSERT INTO games (gameId, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
+        DatabaseHelper.executeUpdate(query, "Failed to create game", ps -> setGameValues(ps, gameData));
     }
 
     private void setGameValues (PreparedStatement values, GameData gameData) throws SQLException {

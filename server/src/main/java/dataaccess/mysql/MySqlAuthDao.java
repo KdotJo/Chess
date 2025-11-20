@@ -1,6 +1,7 @@
 package dataaccess.mysql;
 
 import dataaccess.DataAccessException;
+import dataaccess.DatabaseHelper;
 import dataaccess.DatabaseManager;
 import dataaccess.interfaces.AuthDataAccess;
 import model.AuthData;
@@ -17,16 +18,13 @@ public class MySqlAuthDao implements AuthDataAccess {
     @Override
     public String createAuth(String username) throws DataAccessException {
         var query = "INSERT INTO authTokens (authToken, username) VALUES (?, ?)";
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+        return DatabaseHelper.executeUpdateWithReturn(query, "Failed to create authToken", ps -> {
             String authToken = UUID.randomUUID().toString();
-            preparedStatement.setString(1, authToken);
-            preparedStatement.setString(2, username);
-            preparedStatement.executeUpdate();
+            ps.setString(1, authToken);
+            ps.setString(2, username);
+            ps.executeUpdate();
             return authToken;
-        } catch (SQLException e) {
-            throw new DataAccessException("Failed to create authToken", e);
-        }
+        });
     }
 
     @Override
