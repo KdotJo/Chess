@@ -15,22 +15,22 @@ public class GameDaoTests {
     }
 
     @Test
-    public void testThree() {
+    public void test12312u() {
         Server server = new Server();
     }
 
     @Test
-    public void testFour() {
+    public void test3o045() {
         Server server = new Server();
     }
 
     @Test
-    public void testFive() {
+    public void test123903() {
         Server server = new Server();
     }
 
     @Test
-    public void testSix() {
+    public void test33dd() {
         Server server = new Server();
     }
 }

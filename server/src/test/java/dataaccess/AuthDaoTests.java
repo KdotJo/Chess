@@ -8,32 +8,32 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AuthDaoTests {
     @Test
-    public void testCreateNewGame() {
+    public void testCreateNewAuth() {
         Server server = new Server();
     }
 
     @Test
-    public void testFailedCreateGame() {
+    public void testFailedCreateAuth() {
         Server server = new Server();
     }
 
     @Test
-    public void testThree() {
+    public void test020ejd() {
         Server server = new Server();
     }
 
     @Test
-    public void testFour() {
+    public void testF123() {
         Server server = new Server();
     }
 
     @Test
-    public void testFive() {
+    public void test393() {
         Server server = new Server();
     }
 
     @Test
-    public void testSix() {
+    public void test249() {
         Server server = new Server();
     }
 }
