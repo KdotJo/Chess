@@ -24,9 +24,12 @@ public class ListGamesHandler {
             ListGamesResult result = gameService.list(authToken);
             ctx.status(200).json(result);
         } catch (DataAccessException e) {
-            String message = e.getMessage().contains("Error") ? e.getMessage() : "Error: " + e.getMessage();
-            int statusCode = "failed to get connection".equals(e.getMessage()) ? 500 : 401;
-            ctx.status(statusCode).json(Map.of("message", message));
+            String message = e.getMessage().contains("Error") ? e.getMessage() : "Error: " + e.getMessage() + " Please Check ListGamesHandler";
+            if (e.getMessage().equals("failed to get connection")) {
+                ctx.status(500).json(Map.of("message", message));
+            } else {
+                ctx.status(401).json(Map.of("message", e.getMessage().contains("Error") ? e.getMessage() : "Error: " + e.getMessage()));
+            }
         }
     }
 

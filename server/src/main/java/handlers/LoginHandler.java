@@ -29,9 +29,13 @@ public class LoginHandler {
             LoginResult result = userService.login(req);
             ctx.status(200).json(result);
         } catch (DataAccessException e) {
-            String message = e.getMessage().contains("Error") ? e.getMessage() : "Error: " + e.getMessage();
-            int statusCode = "failed to get connection".equals(e.getMessage()) ? 500 : 401;
-            ctx.status(statusCode).json(Map.of("message", message));
+            String message = e.getMessage().contains("Error") ? e.getMessage() : "Error: " + e.getMessage() + " Please Check LoginHandler";
+            int code = "failed to get connection".equals(e.getMessage()) ? 500 : 401;
+            if (code == 500) {
+                ctx.status(code).json(Map.of("message", message));
+            } else {
+                ctx.status(code).json(Map.of("message", message));
+            }
         }
     }
 }

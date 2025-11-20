@@ -184,7 +184,7 @@ public class ChessClient {
 
     private String loggedIn(String input) {
         String[] commands = input.split("\\s+");
-        if (commands.length == 0 || commands[0].isEmpty()) return "";
+        if (commands.length == 0 || commands[0].isEmpty()) {return "";}
 
         String lower = commands[0].toLowerCase();
         try {
@@ -237,7 +237,7 @@ public class ChessClient {
             return;
         }
         int id = parseAndValidateGameId(commands[2]);
-        if (id == -1) return;
+        if (id == -1) {return;}
 
         int gameId = gameList.get(id).getGameID();
         String color = commands[1].toUpperCase();
@@ -254,7 +254,7 @@ public class ChessClient {
             return;
         }
         int id = parseAndValidateGameId(commands[1]);
-        if (id == -1) return;
+        if (id == -1) {return;}
 
         display(new ChessGame(), "You are now spectating\n\n", "WHITE");
     }
