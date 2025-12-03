@@ -1,5 +1,6 @@
 package handlers;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.AuthDataAccess;
@@ -104,6 +105,51 @@ public class WebSocketHandler {
         notification(gameId, joinMsg, ctx);
     }
 
+    public void handleMove(WsContext ctx, WebSocketMessage msg) throws DataAccessException {
+        int gameId = msg.gameID;
+        String token = msg.authToken;
+        var auth = authDao.getAuth(token);
+        if (auth == null) {
+            sendError(ctx, "Invalid AuthToken");
+            return;
+        }
+        var game = gameDao.getGame(gameId);
+        if (game == null) {
+            sendError(ctx, "Invalid gameId");
+            return;
+        }
+        String username = auth.getUsername();
+        ClientInfo info = gameUsers.get(ctx);
+
+        if (info == null || info.gameId != msg.gameID) {
+            sendError(ctx, "You are not a part of the game");
+            return;
+        }
+
+        Role role = gameRoles.get(ctx);
+        if (role == Role.SPECTATOR) {
+            sendError(ctx, "Spectators can't make moves");
+        }
+        boolean whiteTurn = game.getGame().getTeamTurn() == ChessGame.TeamColor.WHITE;
+
+        if (whiteTurn && role != Role.WHITE || (!whiteTurn && role != Role.BLACK)) {
+            sendError(ctx, "Not your turn");
+            return;
+        }
+        try {
+            game.getGame().makeMove(msg.move);
+        } catch (Exception e) {
+            sendError(ctx, "Invalid move");
+            return;
+        }
+        gameDao.updateGame(gameId, game.getWhiteUsername(), game.getBlackUsername());
+
+        LoadGameMessage update = new LoadGameMessage(game);
+
+        notification(gameId, update, ctx);
+    }
+
+
     public void connect(WsConnectContext ctx) {
         logger.info("WebSocket CONNECT: " + ctx.sessionId());
     }
@@ -116,6 +162,7 @@ public class WebSocketHandler {
 
         switch (msg.commandType) {
             case "CONNECT" -> handleConnect(ctx, msg);
+            case "MAKE_NOVE" -> handleMove(ctx, msg);
 
             default -> sendError(ctx, "Unknown command: " + msg.commandType);
         }
