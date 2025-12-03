@@ -1,4 +1,4 @@
-package messages;
+package clientMessages;
 
 public class ConnectMessage {
     public int gameID;

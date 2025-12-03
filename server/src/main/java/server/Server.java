@@ -31,6 +31,7 @@ public class Server {
     private final JoinGameHandler joinGameHandler;
     private final ListGamesHandler listGamesHandler;
 
+
     public Server() {
         UserDataAccess userDao;
         AuthDataAccess authDao;
@@ -66,8 +67,13 @@ public class Server {
             .delete("/db", databaseHandler::clearDB)
             .post("/user", registrationHandler::handleRegistration);
 
-        // Register your endpoints and exception handlers here.
+        WebSocketHandler wsHandler = new WebSocketHandler();
 
+        javalin.ws("/ws", ws -> {
+            ws.onConnect(wsHandler::connect);
+            ws.onMessage(wsHandler::message);
+            ws.onClose(wsHandler::close);
+        });
     }
 
     public int run(int desiredPort) {

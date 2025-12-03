@@ -5,14 +5,12 @@ import org.junit.jupiter.api.*;
 import passoff.model.*;
 import passoff.websocket.*;
 import server.Server;
-import messages.commands.UserGameCommand;
-import messages.messages.ServerMessage;
+import websocket.commands.UserGameCommand;
+import websocket.messages.ServerMessage;
 
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static messages.messages.ServerMessage.ServerMessageType.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class WebSocketTests {

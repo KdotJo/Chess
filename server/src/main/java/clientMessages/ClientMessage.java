@@ -1,4 +1,4 @@
-package messages;
+package clientMessages;
 
 public class ClientMessage {
 }

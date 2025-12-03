@@ -1,4 +1,4 @@
-package messages;
+package clientMessages;
 
 public class MoveMessage {
     public int gameID;
