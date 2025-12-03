@@ -9,9 +9,13 @@ import messages.WebSocketMessage;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class WebSocketHandler {
     public enum Role { WHITE, BLACK, SPECTATOR }
+    private static final Logger logger = LoggerFactory.getLogger(WebSocketHandler.class);
 
     public static class ClientInfo {
         String authToken;
@@ -21,6 +25,18 @@ public class WebSocketHandler {
     private final Map<Integer, Set<Session>> activeGames = new ConcurrentHashMap<>();
     private final Map<Session, Role> gameRoles = new ConcurrentHashMap<>();
     private final Map<Session, ClientInfo> gameUsers = new ConcurrentHashMap<>();
+
+    public void notification(int gameId, Object notification) {
+        Gson gson = new Gson();
+        String json = gson.toJson(notification);
+        for (Session s : activeGames.getOrDefault(gameId, Set.of())) {
+            try {
+                s.getRemote().sendString(json);
+            } catch (Exception e) {
+                logger.error("Failed to send WebSocket message", e);
+            }
+        }
+    }
 
     public void handleConnect(Session session, WebSocketMessage msg) throws DataAccessException {
         Gson gson = new Gson();
