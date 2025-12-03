@@ -98,7 +98,7 @@ public class WebSocketHandler {
         ctx.send(new Gson().toJson(loadMsg));
 
         NotificationMessage joinMsg = new NotificationMessage(
-                ServerMessage.ServerMessageType.PLAYER_JOINED,
+                ServerMessage.ServerMessageType.NOTIFICATION,
                 username + " joined as " + assigned.name()
         );
         notification(gameId, joinMsg, ctx);
