@@ -67,7 +67,7 @@ public class Server {
             .delete("/db", databaseHandler::clearDB)
             .post("/user", registrationHandler::handleRegistration);
 
-        WebSocketHandler wsHandler = new WebSocketHandler();
+        WebSocketHandler wsHandler = new WebSocketHandler(gameDao, authDao);
 
         javalin.ws("/ws", ws -> {
             ws.onConnect(wsHandler::connect);

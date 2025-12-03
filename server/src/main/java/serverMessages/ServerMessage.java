@@ -1,11 +1,20 @@
 package serverMessages;
 
 public class ServerMessage {
-    public String serverMessageType;
-    public Object data;
 
-    public ServerMessage(String type, Object data) {
+    public enum ServerMessageType {
+        LOAD_GAME,
+        ERROR,
+        NOTIFICATION,
+        PLAYER_JOINED,
+        PLAYER_LEFT
+    }
+
+    public ServerMessageType serverMessageType;
+
+    public ServerMessage(ServerMessageType type) {
         this.serverMessageType = type;
-        this.data = data;
     }
 }
+
+

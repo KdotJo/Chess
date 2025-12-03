@@ -2,5 +2,6 @@ package clientMessages;
 
 public class WebSocketMessage {
     public String commandType;
-    public Object data;
+    public String authToken;
+    public int gameID;
 }

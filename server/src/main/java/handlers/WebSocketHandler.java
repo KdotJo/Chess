@@ -1,19 +1,15 @@
 package handlers;
 
-import clientMessages.ConnectResponse;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
-import dataaccess.mysql.MySqlAuthDao;
-import clientMessages.ConnectMessage;
-import dataaccess.mysql.MySqlGameDao;
-import io.javalin.websocket.WsCloseContext;
-import io.javalin.websocket.WsConnectContext;
-import io.javalin.websocket.WsContext;
-import io.javalin.websocket.WsMessageContext;
+import dataaccess.interfaces.AuthDataAccess;
+import dataaccess.interfaces.GameDataAccess;
+import io.javalin.websocket.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import clientMessages.ConnectMessage;
 import clientMessages.WebSocketMessage;
-import serverMessages.ServerMessage;
+import serverMessages.*;
 
 import java.util.Map;
 import java.util.Set;
@@ -23,6 +19,14 @@ public class WebSocketHandler {
 
     public enum Role { WHITE, BLACK, SPECTATOR }
     private static final Logger logger = LoggerFactory.getLogger(WebSocketHandler.class);
+
+    private final GameDataAccess gameDao;
+    private final AuthDataAccess authDao;
+
+    public WebSocketHandler(GameDataAccess gameDao, AuthDataAccess authDao) {
+        this.gameDao = gameDao;
+        this.authDao = authDao;
+    }
 
     public static class ClientInfo {
         String authToken;
@@ -35,50 +39,40 @@ public class WebSocketHandler {
     private final Map<WsContext, ClientInfo> gameUsers = new ConcurrentHashMap<>();
 
     private void sendError(WsContext ctx, String error) {
-        Gson gson = new Gson();
-        ServerMessage msg = new ServerMessage("ERROR", error);
-
-        ctx.send(gson.toJson(msg));
+        ctx.send(new Gson().toJson(new ErrorMessage(error)));
     }
 
-    public void notification(int gameId, Object notification) {
-        Gson gson = new Gson();
-        String json = gson.toJson(notification);
+    public void notification(int gameId, Object msg, WsContext exclude) {
+        String json = new Gson().toJson(msg);
 
         for (WsContext ctx : activeGames.getOrDefault(gameId, Set.of())) {
-            try {
-                ctx.send(json);
-            } catch (Exception e) {
-                logger.error("Failed to send notification", e);
+            if (ctx != exclude) {
+                try { ctx.send(json); }
+                catch (Exception ignored) {}
             }
         }
     }
 
-
     public void handleConnect(WsContext ctx, WebSocketMessage msg) throws DataAccessException {
 
-        Gson gson = new Gson();
-        ConnectMessage data = gson.fromJson(gson.toJson(msg.data), ConnectMessage.class);
+        int gameId = msg.gameID;
+        String token = msg.authToken;
 
-        int gameId = data.gameID;
-
-        var gameDao = new MySqlGameDao();
         var game = gameDao.getGame(gameId);
         if (game == null) {
             sendError(ctx, "Game does not exist");
             return;
         }
 
-        var authDao = new MySqlAuthDao();
-        var auth = authDao.getAuth(data.authToken);
+        var auth = authDao.getAuth(token);
         if (auth == null) {
             sendError(ctx, "Invalid auth token");
             return;
         }
-        String username = auth.getUsername();
 
+        String username = auth.getUsername();
         ClientInfo info = new ClientInfo();
-        info.authToken = data.authToken;
+        info.authToken = token;
         info.username = username;
         info.gameId = gameId;
 
@@ -89,27 +83,25 @@ public class WebSocketHandler {
 
         boolean whiteTaken = activeGames.get(gameId).stream()
                 .anyMatch(s -> gameRoles.get(s) == Role.WHITE);
+
         boolean blackTaken = activeGames.get(gameId).stream()
                 .anyMatch(s -> gameRoles.get(s) == Role.BLACK);
 
-        Role assignedRole =
+        Role assigned =
                 !whiteTaken ? Role.WHITE :
                         !blackTaken ? Role.BLACK :
                                 Role.SPECTATOR;
 
-        gameRoles.put(ctx, assignedRole);
+        gameRoles.put(ctx, assigned);
 
-        ConnectResponse response = new ConnectResponse(username, gameId, assignedRole.name());
-        ServerMessage serverMsg = new ServerMessage("LOAD_GAME", response);
+        LoadGameMessage loadMsg = new LoadGameMessage(game);
+        ctx.send(new Gson().toJson(loadMsg));
 
-        ctx.send(gson.toJson(serverMsg));
-
-        ServerMessage joinMsg = new ServerMessage(
-                "PLAYER_JOINED",
-                username + " joined as " + assignedRole.name()
+        NotificationMessage joinMsg = new NotificationMessage(
+                ServerMessage.ServerMessageType.PLAYER_JOINED,
+                username + " joined as " + assigned.name()
         );
-
-        notification(gameId, joinMsg);
+        notification(gameId, joinMsg, ctx);
     }
 
     public void connect(WsConnectContext ctx) {
@@ -117,19 +109,20 @@ public class WebSocketHandler {
     }
 
     public void message(WsMessageContext ctx) throws DataAccessException {
-        String rawMessage = ctx.message();  // FIXED: Javalin gives message via ctx.message()
-
+        String raw = ctx.message();
         Gson gson = new Gson();
-        WebSocketMessage wsMessage = gson.fromJson(rawMessage, WebSocketMessage.class);
 
-        switch (wsMessage.commandType) {
-            case "CONNECT" -> handleConnect(ctx, wsMessage);
-            default -> sendError(ctx, "Unknown command: " + wsMessage.commandType);
+        WebSocketMessage msg = gson.fromJson(raw, WebSocketMessage.class);
+
+        switch (msg.commandType) {
+            case "CONNECT" -> handleConnect(ctx, msg);
+
+            default -> sendError(ctx, "Unknown command: " + msg.commandType);
         }
     }
 
     public void close(WsCloseContext ctx) {
-        logger.info("WebSocket CLOSED: " + ctx.sessionId() + " reason=" + ctx.reason());
+        logger.info("WebSocket CLOSED: " + ctx.sessionId());
 
         ClientInfo info = gameUsers.remove(ctx);
         if (info != null) {
