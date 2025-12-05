@@ -38,6 +38,7 @@ public class WebSocketHandler {
     private final Map<Integer, Set<WsContext>> activeGames = new ConcurrentHashMap<>();
     private final Map<WsContext, Role> gameRoles = new ConcurrentHashMap<>();
     private final Map<WsContext, ClientInfo> gameUsers = new ConcurrentHashMap<>();
+    private final Map<Integer, Boolean> finishedGames = new ConcurrentHashMap<>();
 
     private void sendError(WsContext ctx, String error) {
         ctx.send(new Gson().toJson(new ErrorMessage(error)));
@@ -153,6 +154,11 @@ public class WebSocketHandler {
 
         int gameId = msg.gameID;
 
+        if (finishedGames.getOrDefault(gameId, false)) {
+            sendError(ctx, "Game is already over");
+            return;
+        }
+
         var auth = authDao.getAuth(msg.authToken);
         if (auth == null) {
             sendError(ctx, "Invalid AuthToken");
@@ -228,6 +234,12 @@ public class WebSocketHandler {
             return;
         }
         int gameId = info.gameId;
+
+        if (finishedGames.getOrDefault(gameId, false)) {
+            sendError(ctx, "Game is already over");
+            return;
+        }
+
         var game = gameDao.getGame(gameId);
         if (game == null) {
             sendError(ctx, "invalid game id");
@@ -239,6 +251,8 @@ public class WebSocketHandler {
             sendError(ctx, "Spectators can't resign");
             return;
         }
+
+        finishedGames.put(gameId, true);
 
         String message = info.username + " has resigned";
         NotificationMessage resigning = new NotificationMessage(
