@@ -179,7 +179,8 @@ public class WebSocketHandler {
 
         switch (msg.commandType) {
             case "CONNECT" -> handleConnect(ctx, msg);
-            case "MAKE_NOVE" -> handleMove(ctx, msg);
+            case "MAKE_MOVE" -> handleMove(ctx, msg);
+            case "LEAVE" -> handleLeave(ctx, msg);
 
             default -> sendError(ctx, "Unknown command: " + msg.commandType);
         }
