@@ -48,9 +48,11 @@ public class WebSocketHandler {
         String json = new Gson().toJson(msg);
 
         for (WsContext ctx : activeGames.getOrDefault(gameId, Set.of())) {
-            if (ctx != exclude) {
+            if (!ctx.sessionId().equals(exclude.sessionId())) {
                 try { ctx.send(json); }
-                catch (Exception ignored) {}
+                catch (Exception ignored) {
+                    sendError(ctx, "Error: Notification Issue");
+                }
             }
         }
     }
@@ -135,8 +137,9 @@ public class WebSocketHandler {
             sendError(ctx, "Invalid gameId");
             return;
         }
-        String username = auth.getUsername();
         ClientInfo info = gameUsers.get(ctx);
+
+        String username = info.username;
 
         if (info == null || info.gameId != msg.gameID) {
             sendError(ctx, "You are not a part of the game");
@@ -146,6 +149,7 @@ public class WebSocketHandler {
         Role role = gameRoles.get(ctx);
         if (role == Role.SPECTATOR) {
             sendError(ctx, "Spectators can't make moves");
+            return;
         }
         boolean whiteTurn = game.getGame().getTeamTurn() == ChessGame.TeamColor.WHITE;
 
@@ -163,7 +167,13 @@ public class WebSocketHandler {
 
         LoadGameMessage update = new LoadGameMessage(game);
 
+        NotificationMessage moveMessage = new NotificationMessage(
+                ServerMessage.ServerMessageType.NOTIFICATION,
+                username + " has made a move to " + msg.move.toString()
+        );
+
         notification(gameId, update, ctx);
+        notification(gameId, moveMessage, ctx);
     }
 
 
