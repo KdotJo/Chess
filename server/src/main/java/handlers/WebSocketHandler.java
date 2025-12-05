@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import clientMessages.ConnectMessage;
 import clientMessages.WebSocketMessage;
 import serverMessages.*;
+import websocket.commands.UserGameCommand;
 
 import java.util.Map;
 import java.util.Set;
@@ -103,6 +104,22 @@ public class WebSocketHandler {
                 username + " joined as " + assigned.name()
         );
         notification(gameId, joinMsg, ctx);
+    }
+
+    public void handleLeave (WsContext ctx, WebSocketMessage msg) {
+        ClientInfo info = gameUsers.get(ctx);
+        if (info == null) {return;}
+        int gameId = info.gameId;
+        String username = info.username;
+        activeGames.getOrDefault(gameId, Set.of()).remove(ctx);
+        gameRoles.remove(ctx);
+        gameUsers.remove(ctx);
+        NotificationMessage leaveMessage = new NotificationMessage(
+                ServerMessage.ServerMessageType.PLAYER_LEFT,
+                username + " left the game"
+        );
+
+        notification(gameId, leaveMessage, ctx);
     }
 
     public void handleMove(WsContext ctx, WebSocketMessage msg) throws DataAccessException {
