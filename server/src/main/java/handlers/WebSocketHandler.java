@@ -134,7 +134,7 @@ public class WebSocketHandler {
         notificationExclude(gameId, joinMsg, ctx);
     }
 
-    public void handleLeave(WsContext ctx, WebSocketMessage msg) throws DataAccessException {
+    public void handleLeave(WsContext ctx) throws DataAccessException {
         ClientInfo info = gameUsers.get(ctx);
         if (info == null) return;
 
@@ -287,7 +287,7 @@ public class WebSocketHandler {
         switch (msg.commandType) {
             case "CONNECT" -> handleConnect(ctx, msg);
             case "MAKE_MOVE" -> handleMove(ctx, msg);
-            case "LEAVE" -> handleLeave(ctx, msg);
+            case "LEAVE" -> handleLeave(ctx);
             case "RESIGN" -> handleResign(ctx, msg);
             default -> sendError(ctx, "Unknown command: " + msg.commandType);
         }
