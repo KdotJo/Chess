@@ -54,7 +54,7 @@
                     throw new DataAccessException("Error: White Team Already Taken");
                 }
                 else {
-                    gameDao.updateGame(getGame.getGameID(), username, getGame.getBlackUsername());
+                    gameDao.updateGame(getGame.getGameID(), username, getGame.getBlackUsername(), getGame.getGame());
                 }
             }
             if (teamColor.equals("BLACK")) {
@@ -62,7 +62,7 @@
                     throw new DataAccessException("Error: Black Team Already Taken");
                 }
                 else {
-                    gameDao.updateGame(getGame.getGameID(), getGame.getWhiteUsername(), username);
+                    gameDao.updateGame(getGame.getGameID(), getGame.getWhiteUsername(), username, getGame.getGame());
                 }
             }
             return new JoinGameResult(gameDao.getGame(joinGameRequest.gameID()));

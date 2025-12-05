@@ -1,5 +1,6 @@
 package dataaccess.memory;
 
+import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.interfaces.GameDataAccess;
 import model.GameData;
@@ -24,7 +25,7 @@ public class MemoryGameDao implements GameDataAccess {
         return mockDB.values();
     }
 
-    public void updateGame (int gameID, String whiteUsername, String blackUsername) throws DataAccessException {
+    public void updateGame (int gameID, String whiteUsername, String blackUsername, ChessGame game) throws DataAccessException {
         GameData exists = mockDB.get(gameID);
         GameData updated = new GameData(gameID, whiteUsername, blackUsername, exists.getGameName(), exists.getGame());
         mockDB.put(gameID, updated);
