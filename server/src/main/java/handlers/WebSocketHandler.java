@@ -221,6 +221,10 @@ public class WebSocketHandler {
         notificationExclude(gameId, moveMessage, ctx);
     }
 
+    public void handleResign (WsContext ctx, WebSocketMessage msg) {
+
+    }
+
     public void connect(WsConnectContext ctx) {
         logger.info("WebSocket CONNECT: " + ctx.sessionId());
     }
