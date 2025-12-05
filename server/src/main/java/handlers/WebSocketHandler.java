@@ -9,8 +9,8 @@ import io.javalin.websocket.*;
 import model.GameData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import clientMessages.WebSocketMessage;
-import serverMessages.*;
+import messages.WebSocketMessage;
+import messages.*;
 
 import java.util.Map;
 import java.util.Set;
@@ -136,7 +136,7 @@ public class WebSocketHandler {
 
     public void handleLeave(WsContext ctx) throws DataAccessException {
         ClientInfo info = gameUsers.get(ctx);
-        if (info == null) return;
+        if (info == null) {return;}
 
         int gameId = info.gameId;
         String username = info.username;

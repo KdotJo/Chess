@@ -1,4 +1,4 @@
-package serverMessages;
+package messages;
 
 public class ServerMessage {
 

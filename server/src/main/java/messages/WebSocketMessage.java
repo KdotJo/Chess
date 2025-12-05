@@ -1,4 +1,4 @@
-package clientMessages;
+package messages;
 
 import chess.ChessMove;
 
