@@ -24,8 +24,15 @@ public class MySqlGameDao implements GameDataAccess {
 
     private void setGameValues (PreparedStatement values, GameData gameData) throws SQLException {
         values.setInt(1, gameData.getGameID());
-        values.setString(2, gameData.getWhiteUsername());
-        values.setString(3, gameData.getBlackUsername());
+        if (gameData.getWhiteUsername() == null)
+            values.setNull(2, java.sql.Types.VARCHAR);
+        else
+            values.setString(2, gameData.getWhiteUsername());
+
+        if (gameData.getBlackUsername() == null)
+            values.setNull(3, java.sql.Types.VARCHAR);
+        else
+            values.setString(3, gameData.getBlackUsername());
         values.setString(4, gameData.getGameName());
         String json = new Gson().toJson(gameData.getGame());
         values.setString(5, json);
@@ -79,8 +86,10 @@ public class MySqlGameDao implements GameDataAccess {
         var query = "UPDATE games SET whiteUsername = ?, blackUsername = ?, game = ? WHERE gameID = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(query)) {
-            preparedStatement.setString(1, whiteUsername);
-            preparedStatement.setString(2, blackUsername);
+            if (whiteUsername == null) preparedStatement.setNull(1, java.sql.Types.VARCHAR);
+            else preparedStatement.setString(1, whiteUsername);
+            if (blackUsername == null) preparedStatement.setNull(2, java.sql.Types.VARCHAR);
+            else preparedStatement.setString(2, blackUsername);
             String json = new Gson().toJson(game);
             preparedStatement.setString(3, json);
             preparedStatement.setInt(4, gameID);

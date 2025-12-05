@@ -112,8 +112,11 @@ public class WebSocketHandler {
 
         activeGames.putIfAbsent(gameId, ConcurrentHashMap.newKeySet());
 
-        boolean whiteTaken = gameRoles.containsValue(Role.WHITE);
-        boolean blackTaken = gameRoles.containsValue(Role.BLACK);
+        String whiteUser = game.getWhiteUsername();
+        String blackUser = game.getBlackUsername();
+
+        boolean whiteTaken = whiteUser != null && !whiteUser.equals(username);
+        boolean blackTaken = blackUser != null && !blackUser.equals(username);
 
         Role assigned = !whiteTaken ? Role.WHITE :
                 !blackTaken ? Role.BLACK :
@@ -131,7 +134,7 @@ public class WebSocketHandler {
         notificationExclude(gameId, joinMsg, ctx);
     }
 
-    public void handleLeave(WsContext ctx, WebSocketMessage msg) {
+    public void handleLeave(WsContext ctx, WebSocketMessage msg) throws DataAccessException {
         ClientInfo info = gameUsers.get(ctx);
         if (info == null) return;
 
@@ -141,6 +144,16 @@ public class WebSocketHandler {
         activeGames.getOrDefault(gameId, Set.of()).remove(ctx);
         gameRoles.remove(ctx);
         gameUsers.remove(ctx);
+
+        GameData game = gameDao.getGame(gameId);
+
+        if (game != null) {
+            if (username.equals(game.getWhiteUsername())) {
+                gameDao.updateGame(gameId, null, game.getBlackUsername(), game.getGame());
+            } else if (username.equals(game.getBlackUsername())) {
+                gameDao.updateGame(gameId, game.getWhiteUsername(), null, game.getGame());
+            }
+        }
 
         NotificationMessage leaveMessage = new NotificationMessage(
                 ServerMessage.ServerMessageType.PLAYER_LEFT,
