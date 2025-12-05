@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WebSocketHandler {
 
     public enum Role { WHITE, BLACK, SPECTATOR }
-    private static final Logger logger = LoggerFactory.getLogger(WebSocketHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(WebSocketHandler.class);
 
     private final GameDataAccess gameDao;
     private final AuthDataAccess authDao;
@@ -277,7 +277,7 @@ public class WebSocketHandler {
     }
 
     public void connect(WsConnectContext ctx) {
-        logger.info("WebSocket CONNECT: " + ctx.sessionId());
+        log.info("WebSocket CONNECT: " + ctx.sessionId());
     }
 
     public void message(WsMessageContext ctx) throws DataAccessException {
@@ -294,7 +294,7 @@ public class WebSocketHandler {
     }
 
     public void close(WsCloseContext ctx) {
-        logger.info("WebSocket CLOSED: " + ctx.sessionId());
+        log.info("WebSocket CLOSED: " + ctx.sessionId());
 
         ClientInfo info = gameUsers.remove(ctx);
         if (info != null) {
