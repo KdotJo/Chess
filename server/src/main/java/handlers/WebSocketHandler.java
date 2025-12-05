@@ -8,10 +8,8 @@ import dataaccess.interfaces.GameDataAccess;
 import io.javalin.websocket.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import clientMessages.ConnectMessage;
 import clientMessages.WebSocketMessage;
 import serverMessages.*;
-import websocket.commands.UserGameCommand;
 
 import java.util.Map;
 import java.util.Set;
@@ -44,15 +42,36 @@ public class WebSocketHandler {
         ctx.send(new Gson().toJson(new ErrorMessage(error)));
     }
 
-    public void notification(int gameId, Object msg, WsContext exclude) {
+    public boolean ggs(ChessGame chess) {
+        if (chess.isInStalemate(ChessGame.TeamColor.WHITE) ||
+        chess.isInStalemate(ChessGame.TeamColor.BLACK ) ||
+        chess.isInCheckmate(ChessGame.TeamColor.WHITE) ||
+        chess.isInCheckmate(ChessGame.TeamColor.BLACK)) {
+            return true;
+        }
+        return false;
+    }
+
+    public void notificationExclude(int gameId, Object msg, WsContext exclude) {
         String json = new Gson().toJson(msg);
 
         for (WsContext ctx : activeGames.getOrDefault(gameId, Set.of())) {
             if (!ctx.sessionId().equals(exclude.sessionId())) {
                 try { ctx.send(json); }
-                catch (Exception ignored) {
+                catch (Exception e) {
                     sendError(ctx, "Error: Notification Issue");
                 }
+            }
+        }
+    }
+
+    public void notificationEveryone(int gameId, Object msg) {
+        String json = new Gson().toJson(msg);
+        for (WsContext ctx : activeGames.getOrDefault(gameId, Set.of())) {
+            try {
+                ctx.send(json);
+            } catch (Exception e) {
+                sendError(ctx, "Error: Notification Issue");
             }
         }
     }
@@ -105,7 +124,7 @@ public class WebSocketHandler {
                 ServerMessage.ServerMessageType.NOTIFICATION,
                 username + " joined as " + assigned.name()
         );
-        notification(gameId, joinMsg, ctx);
+        notificationExclude(gameId, joinMsg, ctx);
     }
 
     public void handleLeave (WsContext ctx, WebSocketMessage msg) {
@@ -121,12 +140,13 @@ public class WebSocketHandler {
                 username + " left the game"
         );
 
-        notification(gameId, leaveMessage, ctx);
+        notificationExclude(gameId, leaveMessage, ctx);
     }
 
     public void handleMove(WsContext ctx, WebSocketMessage msg) throws DataAccessException {
         int gameId = msg.gameID;
         String token = msg.authToken;
+
         var auth = authDao.getAuth(token);
         if (auth == null) {
             sendError(ctx, "Invalid AuthToken");
@@ -137,11 +157,19 @@ public class WebSocketHandler {
             sendError(ctx, "Invalid gameId");
             return;
         }
-        ClientInfo info = gameUsers.get(ctx);
 
+        ChessGame chess = game.getGame();
+
+        if (ggs(chess)) {
+            LoadGameMessage ggsMessage = new LoadGameMessage(game);
+            notificationEveryone(gameId, ggsMessage);
+            return;
+        }
+
+        ClientInfo info = gameUsers.get(ctx);
         String username = info.username;
 
-        if (info == null || info.gameId != msg.gameID) {
+        if (info.gameId != msg.gameID) {
             sendError(ctx, "You are not a part of the game");
             return;
         }
@@ -152,7 +180,6 @@ public class WebSocketHandler {
             return;
         }
         boolean whiteTurn = game.getGame().getTeamTurn() == ChessGame.TeamColor.WHITE;
-
         if (whiteTurn && role != Role.WHITE || (!whiteTurn && role != Role.BLACK)) {
             sendError(ctx, "Not your turn");
             return;
@@ -172,8 +199,8 @@ public class WebSocketHandler {
                 username + " has made a move to " + msg.move.toString()
         );
 
-        notification(gameId, update, ctx);
-        notification(gameId, moveMessage, ctx);
+        notificationEveryone(gameId, update);
+        notificationExclude(gameId, moveMessage, ctx);
     }
 
 
