@@ -221,8 +221,32 @@ public class WebSocketHandler {
         notificationExclude(gameId, moveMessage, ctx);
     }
 
-    public void handleResign (WsContext ctx, WebSocketMessage msg) {
+    public void handleResign (WsContext ctx, WebSocketMessage msg) throws DataAccessException {
+        ClientInfo info = gameUsers.get(ctx);
+        if (info == null) {
+            sendError(ctx, "You are not in a game");
+            return;
+        }
+        int gameId = info.gameId;
+        var game = gameDao.getGame(gameId);
+        if (game == null) {
+            sendError(ctx, "invalid game id");
+            return;
+        }
 
+        Role role = gameRoles.get(ctx);
+        if (role == Role.SPECTATOR) {
+            sendError(ctx, "Spectators can't resign");
+            return;
+        }
+
+        String message = info.username + " has resigned";
+        NotificationMessage resigning = new NotificationMessage(
+                ServerMessage.ServerMessageType.NOTIFICATION,
+                message
+        );
+
+        notificationEveryone(gameId, resigning);
     }
 
     public void connect(WsConnectContext ctx) {
